@@ -1,13 +1,27 @@
-import { FontAwesome } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { Tabs, useNavigation, useSegments } from "expo-router";
+import { TouchableOpacity } from "react-native";
 
 export default function AppLayout() {
+  const segments = useSegments();
+  const page = segments[segments.length - 1];
+  const pagesToHideTabs = ["scan"];
+
+  const navigation = useNavigation();
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "blue",
-        tabBarStyle: { height: 60 },
-        tabBarLabelStyle: { fontSize: 12, marginBottom: 8, marginTop: -8 },
+        tabBarStyle: {
+          height: 60,
+          display: pagesToHideTabs.includes(page) ? "none" : "flex",
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: 8,
+          marginTop: -8,
+        },
       }}
     >
       <Tabs.Screen
@@ -22,10 +36,20 @@ export default function AppLayout() {
       <Tabs.Screen
         name="scan"
         options={{
-          title: "Camera",
+          title: "Scan",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" color={color} size={22} />
           ),
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: 20 }}
+            >
+              <AntDesign name="arrowleft" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+          headerTransparent: true,
+          headerTitle: "",
         }}
       />
       <Tabs.Screen
