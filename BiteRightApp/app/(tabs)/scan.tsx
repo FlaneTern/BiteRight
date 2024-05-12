@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera/next";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import Buttons from "../../components/Buttons";
 
 export default function Camera() {
