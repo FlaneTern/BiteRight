@@ -1,7 +1,6 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Tabs, useNavigation, useSegments } from "expo-router";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Tabs, useNavigation, useSegments } from "expo-router";
+import { TouchableOpacity } from "react-native";
 
 export default function AppLayout() {
   const segments = useSegments();
@@ -11,80 +10,57 @@ export default function AppLayout() {
   const navigation = useNavigation();
 
   return (
-    <SafeAreaProvider>
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: "blue",
-          tabBarInactiveTintColor: "black",
-          tabBarStyle: {
-            height: 60,
-            display: pagesToHideTabs.includes(page) ? "none" : "flex",
-          },
-          tabBarLabelStyle: {
-            fontSize: 12.5,
-            fontWeight: "bold",
-            marginBottom: 8,
-            marginTop: -8,
-          },
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: "blue",
+        tabBarStyle: {
+          height: 60,
+          display: pagesToHideTabs.includes(page) ? "none" : "flex",
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: 8,
+          marginTop: -8,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="home" color={color} size={28} />
+          ),
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color }) => (
-              <FontAwesome name="home" color={color} size={28} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="scan"
-          options={{
-            title: "Scan",
-            tabBarIcon: ({ color }) => (
-              <View style={styles.scanButton}>
-                <FontAwesome name="camera" color={color} size={22} />
-                <Text style={{ fontWeight: "bold", fontSize: 12.5 }}>Scan</Text>
-              </View>
-            ),
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={{ marginLeft: 20 }}
-              >
-                <AntDesign name="arrowleft" size={28} color="white" />
-              </TouchableOpacity>
-            ),
-            headerTransparent: true,
-            headerTitle: "",
-            tabBarLabel: "",
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: "Settings",
-            tabBarIcon: ({ color }) => (
-              <FontAwesome name="gear" color={color} size={24} />
-            ),
-          }}
-        />
-      </Tabs>
-    </SafeAreaProvider>
+      />
+      <Tabs.Screen
+        name="scan"
+        options={{
+          title: "Scan",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="camera" color={color} size={22} />
+          ),
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: 20 }}
+            >
+              <AntDesign name="arrowleft" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="gear" color={color} size={24} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  scanButton: {
-    width: 70,
-    height: 70,
-    backgroundColor: "yellow",
-    borderRadius: 35,
-    borderColor: "black",
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    marginBottom: 40,
-  },
-});
