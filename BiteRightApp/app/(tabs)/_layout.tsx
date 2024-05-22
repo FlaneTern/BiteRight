@@ -1,6 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Tabs, useNavigation, useSegments } from "expo-router";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import {
+  AntDesign,
+  FontAwesome,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
 export default function AppLayout() {
   const segments = useSegments();
@@ -41,7 +45,11 @@ export default function AppLayout() {
           title: "Scan",
           tabBarIcon: ({ color }) => (
             <View style={styles.scanButton}>
-              <FontAwesome name="camera" color={color} size={22} />
+              <MaterialCommunityIcons
+                name="line-scan"
+                color={color}
+                size={22}
+              />
               <Text style={{ fontWeight: "bold", fontSize: 12.5 }}>Scan</Text>
             </View>
           ),
