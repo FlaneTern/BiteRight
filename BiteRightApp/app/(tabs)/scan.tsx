@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useCameraPermissions } from "expo-camera";
+
 import BarcodeScan from "../../components/BarcodeScan";
 
 export default function Camera() {

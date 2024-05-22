@@ -1,63 +1,56 @@
-import { Dimensions, StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { Dimensions, StyleSheet, Text } from "react-native";
 import { BarcodeScanningResult, CameraView } from "expo-camera";
 import { router } from "expo-router";
 
-import ScanArea from "./ScanArea";
+import { ScanArea } from "./ScanArea";
 
 export default function BarcodeScan() {
   const [scanned, setScanned] = useState(false);
-
-  let scannedValue = new Map<string, number>();
+  const [ID, setID] = useState("");
+  const scannedValue = new Map();
 
   const handleScannedBarcode = (scanningResult: BarcodeScanningResult) => {
-    const points = scanningResult.cornerPoints.map((point) => ({
-      x: point.x,
-      y: point.y,
-    }));
+    const { cornerPoints, data } = scanningResult;
+    const points = cornerPoints.map((point) => ({ x: point.x, y: point.y }));
 
-    let deviceWidth = Dimensions.get("window").width;
-    let deviceHeight = Dimensions.get("window").height;
-
-    const scanX = deviceWidth / 2 - deviceWidth * 0.35;
-    const scanY = deviceHeight / 2 - deviceHeight * 0.25;
-
-    const scannableArea = {
-      width: [scanX, scanX + deviceWidth * 0.7],
-      height: [scanY, scanY + deviceHeight * 0.5],
+    const { width, height } = Dimensions.get("window");
+    const scanArea = {
+      xMin: width * 0.15,
+      xMax: width * 0.85,
+      yMin: height * 0.25,
+      yMax: height * 0.75,
     };
 
     const isInsideArea = points.every(
       (point) =>
-        point.x >= scannableArea.width[0] &&
-        point.x <= scannableArea.width[1] &&
-        point.y >= scannableArea.height[0] &&
-        point.y <= scannableArea.height[1]
+        point.x >= scanArea.xMin &&
+        point.x <= scanArea.xMax &&
+        point.y >= scanArea.yMin &&
+        point.y <= scanArea.yMax
     );
 
-    const data = scanningResult.data;
-    if (scannedValue.get(data)! > 3) {
+    if (scannedValue.get(data) > 3) {
       setScanned(true);
+      setID(data);
     }
 
     if (scanned) {
-      router.navigate(`/product/${data}`);
+      router.navigate(`/product/${ID}`);
       setScanned(false);
+      setID("");
       scannedValue.clear();
       return;
     }
 
     if (isInsideArea) {
-      scannedValue.set(
-        data,
-        scannedValue.has(data) ? scannedValue.get(data)! + 1 : 1
-      );
+      scannedValue.set(data, (scannedValue.get(data) || 0) + 1);
     }
   };
 
   return (
     <CameraView
-      style={StyleSheet.absoluteFillObject}
+      style={[StyleSheet.absoluteFillObject, styles.camera]}
       facing="back"
       barcodeScannerSettings={{ barcodeTypes: ["ean13", "ean8"] }}
       onBarcodeScanned={(scanningResult) =>
@@ -65,6 +58,22 @@ export default function BarcodeScan() {
       }
     >
       <ScanArea />
+      <Text style={styles.text}>Align the barcode within the scanner</Text>
     </CameraView>
   );
 }
+
+const styles = StyleSheet.create({
+  camera: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 60,
+    textAlign: "center",
+  },
+});

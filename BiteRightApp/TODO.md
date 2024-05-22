@@ -1,9 +1,9 @@
 ## TODO
 
-- [X] Get Bottom Tabs Navigation working
+- [x] Get Bottom Tabs Navigation working
 - [ ] Add more pages to stack nav
-- [X] Readjust camera position on bottom nav once the design is finalized
-- [X] Link to camera
-- [X] Add overlay to camera for barcode scanning
-- [ ] Make overlay nicer
+- [x] Readjust camera position on bottom nav once the design is finalized
+- [x] Link to camera
+- [x] Add overlay to camera for barcode scanning
+- [x] Make overlay nicer
 - [ ] Make Landing page as default when first opening the app
