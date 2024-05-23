@@ -23,7 +23,11 @@
         "foregroundImage": "./assets/BiteRight_Icon.png",
         "backgroundColor": "#129B68"
       },
-      "package": "com.wrpl.biterightapp"
+      "package": "com.wrpl.biterightapp",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,6 +51,12 @@
         "projectId": "70d36a35-dc04-485d-8c5e-a513d0598804"
       }
     },
-    "owner": "davinjason"
+    "owner": "davinjason",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/70d36a35-dc04-485d-8c5e-a513d0598804"
+    }
   }
 }
