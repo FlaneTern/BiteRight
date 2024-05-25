@@ -27,7 +27,12 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "splash": {
+        "backgroundColor": "#129B68",
+        "image": "./assets/BiteRight_Logo.png",
+        "resizeMode": "contain"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
