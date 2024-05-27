@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Tabs, useNavigation, useSegments } from "expo-router";
+import { Tabs, useRouter, useSegments } from "expo-router";
 import {
   AntDesign,
   FontAwesome,
@@ -11,7 +11,7 @@ export default function AppLayout() {
   const page = segments[segments.length - 1];
   const pagesToHideTabs = ["scan"];
 
-  const navigation = useNavigation();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -31,7 +31,7 @@ export default function AppLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
@@ -55,7 +55,7 @@ export default function AppLayout() {
           ),
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => navigation.goBack()}
+              onPress={() => router.back()}
               style={{ marginLeft: 20 }}
             >
               <AntDesign name="arrowleft" size={28} color="white" />

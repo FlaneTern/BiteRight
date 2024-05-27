@@ -1,7 +1,8 @@
 import { StyleSheet, View } from "react-native";
 import { useCameraPermissions } from "expo-camera";
 
-import BarcodeScan from "../../components/BarcodeScan";
+import BarcodeScan from "../../../components/BarcodeScan";
+import Colors from "../../../constants/Colors";
 
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -25,6 +26,7 @@ export default function Camera() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.c400,
     justifyContent: "center",
   },
 });
