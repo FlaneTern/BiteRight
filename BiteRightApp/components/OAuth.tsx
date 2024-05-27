@@ -17,7 +17,9 @@ const OAuthButton = () => {
       const { createdSessionId, setActive } = await startOAuthFlow();
 
       if (createdSessionId) {
-        setActive && setActive({ session: createdSessionId });
+        setActive!({ session: createdSessionId });
+      } else {
+        console.error("failed to sign in or sign up");
       }
     } catch (err) {
       console.error("OAuth error", err);
