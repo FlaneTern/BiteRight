@@ -52,9 +52,7 @@
         {
           "fonts": ["./assets/fonts/RobotoFlex-Regular.ttf"]
         }
-      ],
-      "expo-secure-store",
-      "expo-web-browser"
+      ]
     ],
     "extra": {
       "router": {

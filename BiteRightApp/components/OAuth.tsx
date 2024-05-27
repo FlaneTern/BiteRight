@@ -17,9 +17,7 @@ const OAuthButton = () => {
       const { createdSessionId, setActive } = await startOAuthFlow();
 
       if (createdSessionId) {
-        await setActive!({ session: createdSessionId });
-      } else {
-        console.error("OAuth error", "No session ID returned");
+        setActive && setActive({ session: createdSessionId });
       }
     } catch (err) {
       console.error("OAuth error", err);
