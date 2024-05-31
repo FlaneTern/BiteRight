@@ -1,6 +1,9 @@
 export default {
   main: "#129B68",
+  main2: "#68CCA8",
+  main3: "#BAE5D5",
   accent: "#FFC568",
+  accent2: "#FFA10B",
   black: "#141414",
   red1: "#FFC3C3",
   red2: "#E75F5F",

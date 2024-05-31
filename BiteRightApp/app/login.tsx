@@ -1,7 +1,9 @@
 import {
   ActivityIndicator,
   Alert,
+  Button,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -10,33 +12,31 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import Colors from "../constants/Colors";
-import { Link, useLocalSearchParams } from "expo-router";
-import { defaultStyles } from "../constants/Styles";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { defaultStyles } from "@/constants/Styles";
 import { useSignIn, useSignUp } from "@clerk/clerk-expo";
-import OAuthButton from "../components/OAuth";
+import Colors from "@/constants/Colors";
+import OAuthButton from "@/components/OAuth";
 
 const Login = () => {
-  const logo = require("../assets/images/Logo_Green.png");
-  const logoGoogle = require("../assets/images/Logo_Google.png");
-  const logoFacebook = require("../assets/images/Logo_Facebook.png");
-  const logoApple = require("../assets/images/Logo_Apple.png");
+  const logo = require("@/assets/images/Logo-Green.png");
+  const router = useRouter();
 
   const { type } = useLocalSearchParams<{ type: string }>();
   const { signIn, setActive, isLoaded } = useSignIn();
-  const {
-    signUp,
-    setActive: signUpSetActive,
-    isLoaded: signUpLoaded,
-  } = useSignUp();
+  const { signUp, isLoaded: signUpLoaded } = useSignUp();
 
   const [emailAdddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [reenteredPassword, setReenteredPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const isSignUp = type === "signup";
 
   const onSignInPress = async () => {
     if (!isLoaded) return;
 
+    Keyboard.dismiss();
     setLoading(true);
 
     try {
@@ -56,26 +56,27 @@ const Login = () => {
   const onSignUpPress = async () => {
     if (!signUpLoaded) return;
 
+    Keyboard.dismiss();
     setLoading(true);
 
     try {
-      const completeSignUp = await signUp.create({
+      await signUp.create({
         emailAddress: emailAdddress,
         password,
       });
 
-      await signUpSetActive({ session: completeSignUp.createdSessionId });
-    } catch (err: any) {
-      Alert.alert(err.errors[0].message);
-    } finally {
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setLoading(false);
+      router.replace({ pathname: "/otp", params: { email: emailAdddress } });
+    } catch (err: any) {
+      console.log(err.errors[0].message);
     }
   };
 
   return (
     <KeyboardAvoidingView
-      behavior="height"
-      keyboardVerticalOffset={70}
+      behavior="padding"
+      keyboardVerticalOffset={0}
       style={defaultStyles.pageContainer}
     >
       {loading && (
@@ -84,9 +85,12 @@ const Login = () => {
         </View>
       )}
 
-      <Image source={logo} style={styles.logo} />
+      <Image
+        source={logo}
+        style={[styles.logo, isSignUp && styles.logoSignUp]}
+      />
       <Text style={[defaultStyles.heading1, styles.welcome]}>
-        {type === "signup" ? "Create your account" : "Welcome back!"}
+        {isSignUp ? "Create your account" : "Welcome back!"}
       </Text>
 
       <View>
@@ -96,32 +100,42 @@ const Login = () => {
           placeholderTextColor={Colors.c100}
           value={emailAdddress}
           onChangeText={setEmailAddress}
-          style={styles.inputField}
+          style={[defaultStyles.body, styles.inputField]}
         />
         <TextInput
           placeholder="Password"
           placeholderTextColor={Colors.c100}
           value={password}
           onChangeText={setPassword}
-          style={styles.inputField}
+          style={[defaultStyles.body, styles.inputField]}
           secureTextEntry
         />
+        {isSignUp && (
+          <TextInput
+            placeholder="Re-enter Password"
+            placeholderTextColor={Colors.c100}
+            value={reenteredPassword}
+            onChangeText={setReenteredPassword}
+            style={[defaultStyles.body, styles.inputField]}
+            secureTextEntry
+          />
+        )}
       </View>
 
       <TouchableOpacity style={styles.forgotPassword}>
         <Text
           style={[defaultStyles.body, { color: Colors.main, fontSize: 12 }]}
         >
-          {type === "signup" ? " " : "I forgot my password"}
+          {isSignUp ? "" : "I forgot my password"}
         </Text>
       </TouchableOpacity>
 
-      {type === "signup" ? (
+      {isSignUp ? (
         <TouchableOpacity
           style={[defaultStyles.button, { alignSelf: "center" }]}
           onPress={onSignUpPress}
         >
-          <Text style={[defaultStyles.subheading, { color: Colors.c000 }]}>
+          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
             Create Account
           </Text>
         </TouchableOpacity>
@@ -130,7 +144,7 @@ const Login = () => {
           style={[defaultStyles.button, { alignSelf: "center" }]}
           onPress={onSignInPress}
         >
-          <Text style={[defaultStyles.subheading, { color: Colors.c000 }]}>
+          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
             Login
           </Text>
         </TouchableOpacity>
@@ -145,42 +159,27 @@ const Login = () => {
         OR
       </Text>
 
-      {/* <TouchableOpacity style={[defaultStyles.button, styles.button]}>
-        <Image source={logoGoogle} style={styles.company} />
-        <Text style={[defaultStyles.subheading, { color: Colors.main }]}>
-          Continue with Google
-        </Text>
-      </TouchableOpacity> */}
-      <OAuthButton />
-      <TouchableOpacity style={[defaultStyles.button, styles.button]}>
-        <Image source={logoApple} style={styles.company} />
-        <Text style={[defaultStyles.subheading, { color: Colors.main }]}>
-          Continue with Apple
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[defaultStyles.button, styles.button]}>
-        <Image source={logoFacebook} style={styles.company} />
-        <Text style={[defaultStyles.subheading, { color: Colors.main }]}>
-          Continue with Facebook
-        </Text>
-      </TouchableOpacity>
+      <OAuthButton method="google" />
+      <OAuthButton method="apple" />
+      <OAuthButton method="facebook" />
 
       <Link
+        replace
         href={{
           pathname: "/login",
-          params: { type: type === "signup" ? "" : "signup" },
+          params: { type: isSignUp ? "" : "signup" },
         }}
         style={{ marginTop: 20, color: Colors.c200 }}
         asChild
       >
         <Text style={{ textAlign: "center" }}>
-          <Text style={defaultStyles.bodyUnderlined}>
-            {type === "signup"
-              ? "Already have an account?"
-              : "I don't have an account"}
+          <Text style={[defaultStyles.bodyUnderlined, { fontSize: 12.5 }]}>
+            {isSignUp ? "Already have an account?" : "I don't have an account"}
           </Text>
-          <Text style={[defaultStyles.body, { color: Colors.main }]}>
-            {type === "signup" ? " Sign in" : ""}
+          <Text
+            style={[defaultStyles.body, { color: Colors.main, fontSize: 12.5 }]}
+          >
+            {isSignUp ? " Sign in" : ""}
           </Text>
         </Text>
       </Link>
@@ -190,10 +189,13 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   logo: {
-    marginTop: 115,
+    marginTop: 108,
     width: 63,
     height: 63,
     alignSelf: "center",
+  },
+  logoSignUp: {
+    marginTop: 73,
   },
   welcome: {
     marginVertical: 36,
@@ -207,32 +209,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.c100,
     alignSelf: "center",
-    fontFamily: "RobotoFlex",
-    fontWeight: "regular",
   },
   forgotPassword: {
     marginLeft: "10%",
     marginVertical: 10,
-  },
-  button: {
-    flexDirection: "row",
-    marginVertical: 4,
-    height: 40,
-    backgroundColor: Colors.c000,
-    borderWidth: 1,
-    borderColor: Colors.main,
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  haveAccount: {
-    color: Colors.c200,
-    marginVertical: 20,
-  },
-  company: {
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    alignSelf: "center",
   },
 });
 

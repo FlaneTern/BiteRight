@@ -1,12 +1,13 @@
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
-
 import * as SecureStore from "expo-secure-store";
+import { defaultStyles } from "@/constants/Styles";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -66,6 +67,17 @@ const InitialLayout = () => {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="otp"
+          options={{
+            title: "OTP Verification",
+            headerBackVisible: false,
+            headerTitleAlign: "center",
+            headerTitleStyle: { ...defaultStyles.heading2 },
+            headerTransparent: true,
+            animation: "slide_from_right",
+          }}
+        />
         <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="(auth)/product/[id]"
@@ -91,9 +103,13 @@ const RootLayoutNav = () => {
       publishableKey={CLERK_PUBLISHABLE_KEY!}
       tokenCache={tokenCache}
     >
-      <InitialLayout />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <InitialLayout />
+      </GestureHandlerRootView>
     </ClerkProvider>
   );
 };
+
+const styles = StyleSheet.create({});
 
 export default RootLayoutNav;

@@ -2,6 +2,10 @@ import Colors from "./Colors"
 import { StyleSheet } from "react-native"
 
 export const defaultStyles = StyleSheet.create({
+  pageContainer: {
+    flex: 1,
+    backgroundColor: Colors.c000,
+  },
   button: {
     backgroundColor: Colors.main,
     width: "80%",
@@ -12,14 +16,10 @@ export const defaultStyles = StyleSheet.create({
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
-  },
-  pageContainer: {
-    flex: 1,
-    backgroundColor: Colors.c000,
   },
   heading1: {
     fontSize: 24,
@@ -32,7 +32,7 @@ export const defaultStyles = StyleSheet.create({
     fontFamily: "RobotoFlex",
     fontWeight: "bold",
   },
-  subheading: {
+  subHeading: {
     fontSize: 16,
     fontFamily: "RobotoFlex",
     fontWeight: "bold",
@@ -41,6 +41,11 @@ export const defaultStyles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "RobotoFlex",
     fontWeight: "regular",
+  },
+  bodyBold: {
+    fontSize: 12,
+    fontFamily: "RobotoFlex",
+    fontWeight: "bold",
   },
   bodyUnderlined: {
     fontSize: 12,

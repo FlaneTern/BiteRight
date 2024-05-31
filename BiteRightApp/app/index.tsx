@@ -1,19 +1,14 @@
-import { StyleSheet, View } from "react-native";
 import React from "react";
+import { View } from "react-native";
+import { defaultStyles } from "../constants/Styles";
 import Login from "./login";
-import Colors from "../constants/Colors";
 
-export default function Index() {
+const Index = () => {
   return (
-    <View style={styles.container}>
+    <View style={defaultStyles.pageContainer}>
       <Login />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.c000,
-  },
-});
+export default Index;

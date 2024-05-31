@@ -5,10 +5,10 @@
     "scheme": "biteright-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/BiteRight_Icon.png",
+    "icon": "./assets/images/BiteRight-Icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/BiteRight_Logo.png",
+      "image": "./assets/images/BiteRight-Logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#129B68"
     },
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/BiteRight_Icon.png",
+        "foregroundImage": "./assets/images/BiteRight-Icon.png",
         "backgroundColor": "#129B68"
       },
       "package": "com.wrpl.biterightapp",
@@ -28,9 +28,10 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
+      "softwareKeyboardLayoutMode": "pan",
       "splash": {
         "backgroundColor": "#129B68",
-        "image": "./assets/images/BiteRight_Logo.png",
+        "image": "./assets/images/BiteRight-Logo.png",
         "resizeMode": "contain"
       }
     },
