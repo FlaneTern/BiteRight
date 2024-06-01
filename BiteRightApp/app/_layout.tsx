@@ -8,6 +8,8 @@ import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import { defaultStyles } from "@/constants/Styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SQLiteProvider } from "expo-sqlite";
+import { migrateDBIfNeeded } from "@/utils/Database";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,8 +39,9 @@ const InitialLayout = () => {
   });
 
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
+
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
     if (error) throw error;
@@ -63,7 +66,7 @@ const InitialLayout = () => {
   }, [isSignedIn]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <SQLiteProvider databaseName="users.db" onInit={migrateDBIfNeeded}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -92,8 +95,7 @@ const InitialLayout = () => {
           }}
         />
       </Stack>
-      <StatusBar style="auto" />
-    </View>
+    </SQLiteProvider>
   );
 };
 
