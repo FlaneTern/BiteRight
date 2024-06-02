@@ -7,7 +7,8 @@
 - [x] Add overlay to camera for barcode scanning
 - [x] Make overlay nicer
 - [x] Make Landing page as default when first opening the app
-- [ ] Connect Database
+- [x] Connect Database
 - [ ] Force user to complete profile when they first join
 - [ ] Do BMR calculation
-- [ ] Connect API to Scan and Seacrh
+- [ ] Connect API to Scan and Search
+- [ ] Not Dying

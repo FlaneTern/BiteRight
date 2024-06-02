@@ -7,23 +7,27 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { RefObject, useRef, useState } from "react";
-import { defaultStyles } from "@/constants/Styles";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { TextInput } from "react-native-gesture-handler";
+
+import { defaultStyles } from "@/constants/Styles";
 import Colors from "@/constants/Colors";
 import OTPInput from "@/components/OTPInput";
 
 const OTPPage = () => {
-  const OTPLogo = require("@/assets/images/OTP-Icon.png");
-  const router = useRouter();
-
-  const { email } = useLocalSearchParams<{ email: string }>();
-  const { isLoaded, signUp, setActive } = useSignUp();
-
   const [loading, setLoading] = useState(false);
   const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
   const [errorMessages, setErrorMessages] = useState<string[]>();
+
+  const { email, password } = useLocalSearchParams<{
+    email: string;
+    password: string;
+  }>();
+  const { isLoaded, signUp, setActive } = useSignUp();
+
+  const OTPLogo = require("@/assets/images/OTP-Icon.png");
+  const router = useRouter();
   const refs: RefObject<TextInput>[] = [
     useRef<TextInput>(null),
     useRef<TextInput>(null),
@@ -67,7 +71,11 @@ const OTPPage = () => {
 
       await setActive({ session: completeSignUp.createdSessionId });
       setLoading(false);
-      router.replace("(auth)/(tabs)/home");
+
+      router.replace({
+        pathname: "/(auth)/transition",
+        params: { email: email, password: password },
+      });
     } catch (err: any) {
       console.log(err.errors[0].message);
     }

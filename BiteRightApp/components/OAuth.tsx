@@ -1,8 +1,9 @@
-import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import React, { useCallback } from "react";
-import { useOAuth } from "@clerk/clerk-expo";
-import { defaultStyles } from "@/constants/Styles";
+import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useOAuth, useUser } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
+
+import { defaultStyles } from "@/constants/Styles";
 import WarmUpBrowser from "@/utils/WarmUpBrowser";
 import Colors from "@/constants/Colors";
 
@@ -25,7 +26,7 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({ method }) => {
 
   const { startOAuthFlow } = useOAuth({
     strategy: `oauth_${method}` as mode,
-    redirectUrl: "biteright-app://(auth)/(tabs)/home",
+    redirectUrl: "biteright-app://(auth)/transition",
   });
 
   const _handlePress = useCallback(async () => {
