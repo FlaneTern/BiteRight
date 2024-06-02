@@ -27,7 +27,22 @@ interface TransformedData {
   status_verbose: string;
 }
 
-export async function searchItems(query: string) {
+interface fetchNutrientsParams {
+  query: string;
+  num_servings?: number;
+  aggregate?: string;
+  line_delimited?: boolean;
+  use_raw_foods?: boolean;
+  include_subrecipe?: boolean;
+  timezone?: string;
+  consumed_at?: string;
+  use_branded_foods?: boolean;
+  taxonomy?: boolean;
+  ingredient_statement?: boolean;
+  last_modified?: boolean;
+}
+
+export async function fetchItemsByName(query: string) {
   const url = `${baseURL}/v2/search/instant/?query=${query}`;
   const headers = {
     "Content-Type": "application/json",
@@ -37,40 +52,62 @@ export async function searchItems(query: string) {
 
   try {
     const response = await axios.get(url, { headers });
-    console.log(JSON.stringify(response.data, null, 2));
+    return response.data;
   } catch (error) {
     console.error(error);
   }
 }
 
-export async function searchByBarcodes(code: string) {
+export async function fetchItemById(queryType: 'upc' | 'nix_item_id', id: string) {
+  const url = `${baseURL}/v2/search/item/?${queryType}=${id}`;
+  const headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "x-app-id": process.env.EXPO_PUBLIC_NUTRITIONIX_APP_ID!,
+    "x-app-key": process.env.EXPO_PUBLIC_NUTRITIONIX_APP_KEY!,
+  };
+
   try {
-    const response = await axios.get<Partial<TransformedData>>(`https://en.openfoodfacts.net/api/v2/product/${code}?fields=product_name,ingredients,nutriments,image_url,quantity`);
-    const data = response.data;
+    const response = await axios.get(url, { headers });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 
-    const transformedData: TransformedData = {
-      code: data.code || "",
-      product: {
-        image_url: data.product?.image_url || "",
-        ingredients: data.product?.ingredients?.map((ingredient: Ingredient) => ({
-          text: ingredient.text,
-          vegan: ingredient.vegan || null,
-          vegetarian: ingredient.vegetarian || null
-        })) || [],
-        nutriments: Object.keys(data.product?.nutriments || {}).reduce((acc: Nutriments, key: string) => {
-          if (/_unit$|_100g$/.test(key)) {
-            acc[key] = data.product!.nutriments[key];
-          }
-          return acc;
-        }, {} as Nutriments),
-        product_name: data.product?.product_name || "",
-        quantity: data.product?.quantity || ""
-      },
-      status: data.status || 0,
-      status_verbose: data.status_verbose || ""
-    };
+export async function fetchNutrients(params: fetchNutrientsParams) {
+  const url = `${baseURL}/v2/natural/nutrients`;
+  const headers = {
+    "Content-Type": "application/json",
+    "x-app-id": process.env.EXPO_PUBLIC_NUTRITIONIX_APP_ID,
+    "x-app-key": process.env.EXPO_PUBLIC_NUTRITIONIX_APP_KEY,
+  };
+  const body = {
+    query: params.query,
+    num_servings: params.num_servings ?? 1,
+    aggregate: params.aggregate ?? null,
+    line_delimited: params.line_delimited ?? false,
+    use_raw_foods: params.use_raw_foods ?? false,
+    include_subrecipe: params.include_subrecipe ?? false,
+    timezone: params.timezone ?? 'US/Eastern',
+    consumed_at: params.consumed_at ?? null,
+    use_branded_foods: params.use_branded_foods ?? false,
+    taxonomy: params.taxonomy ?? false,
+    ingredient_statement: params.ingredient_statement ?? false,
+    last_modified: params.last_modified ?? false
+  };
 
-    console.log(JSON.stringify(transformedData, null, 2));
+  try {
+    const response = await axios.post(url, body, { headers });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function fetchItemsByEAN(code: string) {
+  try {
+    const response = await axios.get(`https://en.openfoodfacts.net/api/v2/product/${code}?fields=product_name,ingredients,nutriments,image_url,quantity`);
+    return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
   }

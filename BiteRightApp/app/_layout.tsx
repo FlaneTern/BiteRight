@@ -1,15 +1,13 @@
-import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
+import { Slot, SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
-import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
-import * as SecureStore from "expo-secure-store";
-import { defaultStyles } from "@/constants/Styles";
+import { useEffect, useState } from "react";
+import { ClerkProvider, useAuth, useUser } from "@clerk/clerk-expo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SQLiteProvider } from "expo-sqlite";
-import { migrateDBIfNeeded } from "@/utils/Database";
+import * as SecureStore from "expo-secure-store";
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
+
+import { defaultStyles } from "@/constants/Styles";
+import { isUserProfileComplete, migrateDBIfNeeded } from "@/utils/Database";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,11 +35,23 @@ const InitialLayout = () => {
   const [loaded, error] = useFonts({
     RobotoFlex: require("../assets/fonts/RobotoFlex-Regular.ttf"),
   });
+  const [profileComplete, setProfileComplete] = useState(false);
+
+  const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
 
   const router = useRouter();
   const segments = useSegments();
+  const db = useSQLiteContext();
+  const email = user?.primaryEmailAddress?.emailAddress;
 
-  const { isLoaded, isSignedIn } = useAuth();
+  const checkCompletion = async () => {
+    if (email) {
+      const complete = await isUserProfileComplete(db, email);
+
+      setProfileComplete(complete);
+    }
+  };
 
   useEffect(() => {
     if (error) throw error;
@@ -56,46 +66,42 @@ const InitialLayout = () => {
   useEffect(() => {
     if (!isLoaded) return;
 
+    checkCompletion();
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (isSignedIn && !inAuthGroup) {
+    if (isSignedIn && !inAuthGroup && profileComplete) {
       router.replace("(auth)/(tabs)/home");
+    } else if (isSignedIn && !profileComplete) {
+      router.replace({
+        pathname: "/(auth)/profile",
+        params: { canGoBack: "false" },
+      });
     } else if (!isSignedIn) {
       router.replace("/");
     }
   }, [isSignedIn]);
 
+  if (!loaded || !isLoaded) {
+    return <Slot />;
+  }
+
   return (
-    <SQLiteProvider databaseName="users.db" onInit={migrateDBIfNeeded}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="otp"
-          options={{
-            title: "OTP Verification",
-            headerBackVisible: false,
-            headerTitleAlign: "center",
-            headerTitleStyle: { ...defaultStyles.heading2 },
-            headerTransparent: true,
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(auth)/product/[id]"
-          options={{
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => router.navigate("(auth)/(tabs)/home")}
-              >
-                <AntDesign name="arrowleft" size={24} color="black" />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-      </Stack>
-    </SQLiteProvider>
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="otp"
+        options={{
+          title: "OTP Verification",
+          headerBackVisible: false,
+          headerTitleAlign: "center",
+          headerTitleStyle: { ...defaultStyles.heading2 },
+          headerTransparent: true,
+          animation: "slide_from_right",
+        }}
+      />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+    </Stack>
   );
 };
 
@@ -106,12 +112,12 @@ const RootLayoutNav = () => {
       tokenCache={tokenCache}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <InitialLayout />
+        <SQLiteProvider databaseName="users.db" onInit={migrateDBIfNeeded}>
+          <InitialLayout />
+        </SQLiteProvider>
       </GestureHandlerRootView>
     </ClerkProvider>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default RootLayoutNav;
