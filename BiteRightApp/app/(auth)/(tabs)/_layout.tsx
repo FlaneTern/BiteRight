@@ -1,6 +1,6 @@
 import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import { Tabs, useRouter, useSegments } from "expo-router";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
 export default function AppLayout() {
@@ -48,7 +48,7 @@ export default function AppLayout() {
               onPress={() => router.back()}
               style={{ marginLeft: 20 }}
             >
-              <AntDesign name="arrowleft" size={28} color="white" />
+              <FontAwesome6 name="chevron-left" size={28} color="white" />
             </TouchableOpacity>
           ),
           headerTransparent: true,
@@ -81,5 +81,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     marginBottom: 60,
+    elevation: 5,
   },
 });

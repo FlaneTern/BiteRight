@@ -135,7 +135,7 @@ const OTPPage = () => {
 const styles = StyleSheet.create({
   logo: {
     marginTop: 112,
-    width: 69.89,
+    width: 120,
     height: 120,
     alignSelf: "center",
   },
