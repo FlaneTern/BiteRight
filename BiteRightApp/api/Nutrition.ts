@@ -20,13 +20,6 @@ interface Product {
   quantity?: string;
 }
 
-interface TransformedData {
-  code: string;
-  product: Product;
-  status: number;
-  status_verbose: string;
-}
-
 interface fetchNutrientsParams {
   query: string;
   num_servings?: number;
