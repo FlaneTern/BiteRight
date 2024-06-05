@@ -27,11 +27,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const inputRef = useRef<TextInput | null>(null);
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    setTimeout(() => {
       if (editable) inputRef.current?.focus();
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
+    }, 400);
   }, [autoFocus]);
 
   return (

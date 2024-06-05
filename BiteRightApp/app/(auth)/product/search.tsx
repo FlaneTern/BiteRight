@@ -14,6 +14,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
@@ -36,21 +37,21 @@ const SearchPage = () => {
 
   const { width } = Dimensions.get("window");
   const animatedWidth = useSharedValue(width);
-  const animatedY = useSharedValue(50);
+  const animatedY = useSharedValue(28);
   const animatedLeft = useSharedValue(0);
 
   useEffect(() => {
     animatedWidth.value = withTiming(width * 0.9, {
-      duration: 350,
-      easing: Easing.inOut(Easing.poly(4)),
+      duration: 250,
+      easing: Easing.inOut(Easing.ease),
     });
     animatedY.value = withTiming(0, {
-      duration: 350,
-      easing: Easing.inOut(Easing.quad),
+      duration: 250,
+      easing: Easing.in(Easing.quad),
     });
-    animatedLeft.value = withTiming(width - width * 0.9 - 36, {
-      duration: 350,
-      easing: Easing.inOut(Easing.ease),
+    animatedLeft.value = withTiming(width - width * 0.9 - 32, {
+      duration: 250,
+      easing: Easing.inOut(Easing.bezierFn(0.57, 0.13, 0.37, 1.01)),
     });
   }, []);
 
@@ -81,7 +82,7 @@ const SearchPage = () => {
         onSearch();
         setLoading(true);
       }
-    }, 1000);
+    }, 750);
 
     if (!prompt) {
       setResponse({ branded: [], common: [] });
@@ -89,6 +90,16 @@ const SearchPage = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [prompt]);
+
+  const backButton: ViewStyle = {
+    padding: 8,
+    marginLeft: "4%",
+    width: 52,
+    height: 52,
+    justifyContent: "center",
+    alignSelf: "center",
+    alignItems: "center",
+  };
 
   return (
     <View style={defaultStyles.pageContainer}>
@@ -103,19 +114,11 @@ const SearchPage = () => {
         <Animated.View
           entering={FadeIn.duration(300).delay(200)}
           exiting={FadeOut.duration(300)}
+          style={{ zIndex: 10 }}
         >
           <TouchableOpacity
             onPress={() => router.navigate("(tabs)/home")}
-            style={{
-              padding: 8,
-              marginLeft: "4%",
-              width: 52,
-              height: 52,
-              justifyContent: "center",
-              alignSelf: "center",
-              alignItems: "center",
-              zIndex: 10,
-            }}
+            style={backButton}
           >
             <FontAwesome6 name="chevron-left" size={24} color={Colors.c300} />
           </TouchableOpacity>
@@ -132,7 +135,7 @@ const SearchPage = () => {
         {loading ? (
           <ActivityIndicator
             size="large"
-            color={Colors.c300}
+            color={Colors.main}
             style={[
               defaultStyles.loadingOverlay,
               { backgroundColor: Colors.c000 },

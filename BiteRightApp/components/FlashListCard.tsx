@@ -30,10 +30,7 @@ const FlashListCard: React.FC<FlashListCardProps> = ({ items }) => {
       }}
     >
       <View style={styles.main}>
-        <Image
-          source={{ uri: items.photo.thumb }}
-          style={{ width: 56, height: 56, marginHorizontal: 24 }}
-        />
+        <Image source={{ uri: items.photo.thumb }} style={styles.image} />
         <View style={{ flexDirection: "column", width: "85%" }}>
           <Text style={styles.foodName}>
             {`${itemName}${itemName.length > 40 ? "..." : ""}`}
@@ -59,6 +56,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "center",
+  },
+  image: {
+    width: 56,
+    height: 56,
+    marginHorizontal: 24,
+    resizeMode: "contain",
   },
   foodName: {
     ...defaultStyles.bodyBold,
