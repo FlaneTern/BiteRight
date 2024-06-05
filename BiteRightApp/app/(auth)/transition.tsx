@@ -1,11 +1,12 @@
-import { ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+import { ActivityIndicator } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
+import { useEffect } from "react";
+import { useUser } from "@clerk/clerk-expo";
 
-import { createUser, isUserExist } from "@/utils/Database";
 import { defaultStyles } from "@/constants/Styles";
+import { loginStorage } from "@/utils/Storage";
+import { createUser } from "@/utils/Database";
 import Colors from "@/constants/Colors";
 
 const TransitionPage = () => {
@@ -23,20 +24,16 @@ const TransitionPage = () => {
 
   useEffect(() => {
     if (userEmail) {
-      isUserExist(db, userEmail).then((isExist) => {
-        if (isExist) {
-          console.log("User exist");
-          router.replace("/home");
-        } else {
-          console.log("User not exist");
-          createUser(db, userEmail, userPassword, isOAuth);
+      if (loginStorage.contains(`complete_${userEmail}`)) {
+        router.replace("/home");
+      } else {
+        createUser(db, userEmail!, userPassword, isOAuth);
 
-          router.replace({
-            pathname: "/profile",
-            params: { canGoBack: "false" },
-          });
-        }
-      });
+        router.replace({
+          pathname: "/profile",
+          params: { canGoBack: "false" },
+        });
+      }
     }
   }, [userEmail]);
 
