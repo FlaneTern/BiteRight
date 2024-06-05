@@ -47,3 +47,28 @@ export interface DietParams {
   health_goal: string;
   updated_at?: string;
 };
+
+export interface IntakeParams {
+  id?: number;
+  user_id?: number;
+  calories: number;
+  carbohydrates: number;
+  sugar: number;
+  fats: number;
+  protein: number;
+  updated_at?: string;
+};
+
+export interface ConsumptionParams {
+  history_id?: number;
+  user_id: number;
+  consumed_at?: string;
+  food_id: number;
+  food_image: string;
+  food_name: string;
+  calories: number;
+  carbohydrates: number;
+  sugar: number;
+  fats: number;
+  protein: number;
+};
