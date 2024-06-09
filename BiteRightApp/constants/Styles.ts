@@ -11,8 +11,11 @@ export const defaultStyles = StyleSheet.create({
     width: "80%",
     height: 40,
     borderRadius: 8,
+    elevation: 2,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+    flexDirection: "row",
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -53,4 +56,9 @@ export const defaultStyles = StyleSheet.create({
     fontWeight: "regular",
     textDecorationLine: "underline",
   },
+  bodySmall: {
+    fontSize: 10,
+    fontFamily: "RobotoFlex",
+    fontWeight: "regular",
+  }
 })

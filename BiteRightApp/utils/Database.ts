@@ -214,8 +214,11 @@ export const isUserExist = async (db: SQLiteDatabase, email: string) => {
 
 export const isUserProfileComplete = async (db: SQLiteDatabase, email: string) => {
   try {
-    const result = await db.getFirstAsync(
-      "SELECT * FROM user_profile up JOIN users u ON up.user_id = u.user_id WHERE u.email = ?",
+    const result = await db.getFirstAsync(`
+      SELECT * 
+      FROM user_profile up 
+      JOIN users u ON up.user_id = u.user_id 
+      WHERE u.email = ?`,
       [email]
     );
 
@@ -227,9 +230,12 @@ export const isUserProfileComplete = async (db: SQLiteDatabase, email: string) =
   }
 }
 
-export const fetchUserProfile = async (db: SQLiteDatabase, email: string): Promise<ProfileParams> => {
-  const result = await db.getFirstAsync<ProfileParams>(
-    "SELECT * FROM user_profile up JOIN users u ON up.user_id = u.user_id WHERE u.email = ?",
+export const fetchUserProfile = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<ProfileParams>(`
+    SELECT * 
+    FROM user_profile up 
+    JOIN users u ON up.user_id = u.user_id 
+    WHERE u.email = ?`,
     [email]
   );
 
@@ -243,6 +249,42 @@ export const fetchUserProfile = async (db: SQLiteDatabase, email: string): Promi
     weight: 0,
     updated_at: "",
   };
+};
+
+export const getName = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<{ name: string }>(`
+    SELECT name 
+    FROM user_profile up 
+    JOIN users u ON up.user_id = u.user_id 
+    WHERE u.email = ?`,
+    [email]
+  );
+
+  return result?.name;
+};
+
+export const getMaxCalories = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<{ calories: number }>(`
+    SELECT calories 
+    FROM user_intake_limit ul 
+    JOIN users u ON ul.user_id = u.user_id 
+    WHERE u.email = ?`,
+    [email]
+  );
+
+  return result?.calories;
+};
+
+export const getConsumptionHistory = async (db: SQLiteDatabase, email: string, date: string) => {
+  const result = await db.getAllAsync<ConsumptionParams>(`
+    SELECT * 
+    FROM consumption_history ch 
+    JOIN users u ON ch.user_id = u.user_id 
+    WHERE u.email = ? AND DATE(ch.consumed_at) = DATE(?)`,
+    [email, date]
+  );
+
+  return result;
 };
 
 // UPDATE METHODS
