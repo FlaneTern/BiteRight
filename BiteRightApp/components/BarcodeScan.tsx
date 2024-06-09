@@ -36,7 +36,11 @@ export default function BarcodeScan() {
     }
 
     if (scanned) {
-      router.navigate(`/product/${ID}`);
+      router.navigate({
+        pathname: "/(auth)/product/[id]",
+        params: { id: data, type: "ean" },
+      });
+
       setScanned(false);
       setID("");
       scannedValue.clear();

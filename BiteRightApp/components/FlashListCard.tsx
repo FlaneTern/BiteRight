@@ -26,7 +26,10 @@ const FlashListCard: React.FC<FlashListCardProps> = ({ items }) => {
     <Link
       href={{
         pathname: "/(auth)/product/[id]",
-        params: { id: isBranded ? items.nix_item_id : items.food_name },
+        params: {
+          id: isBranded ? items.nix_item_id : items.food_name,
+          type: "nix",
+        },
       }}
     >
       <View style={styles.main}>
