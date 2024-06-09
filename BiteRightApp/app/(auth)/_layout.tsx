@@ -19,11 +19,11 @@ const Layout = () => {
       <Stack.Screen
         name="product/[id]"
         options={{
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <FontAwesome6 name="chevron-left" size={24} color={Colors.c300} />
-            </TouchableOpacity>
-          ),
+          title: "Details",
+          headerTitleStyle: { ...defaultStyles.heading2 },
+          headerTitleAlign: "center",
+          headerBackVisible: false,
+          headerShadowVisible: false,
         }}
       />
       <Stack.Screen

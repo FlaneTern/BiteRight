@@ -2,25 +2,7 @@ import axios from "axios";
 
 const baseURL = process.env.EXPO_PUBLIC_NUTRITIONIX_API_URL!;
 
-interface Ingredient {
-  text: string;
-  vegan: string | null;
-  vegetarian: string | null;
-}
-
-interface Nutriments {
-  [key: string]: string | number;
-}
-
-interface Product {
-  image_url: string;
-  ingredients?: Ingredient[];
-  nutriments: Nutriments;
-  product_name: string;
-  quantity?: string;
-}
-
-interface fetchNutrientsParams {
+export interface fetchNutrientsParams {
   query: string;
   num_servings?: number;
   aggregate?: string;
