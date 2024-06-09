@@ -10,26 +10,29 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-expo";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 
 import { defaultStyles } from "@/constants/Styles";
 import { useSQLiteContext } from "expo-sqlite";
-import {
-  fetchUserProfile,
-  isUserExist,
-  isUserProfileComplete,
-} from "@/utils/Database";
 import { loginStorage } from "@/utils/Storage";
 import Colors from "@/constants/Colors";
 import SearchBar from "@/components/SearchBar";
-import { Link, useRouter } from "expo-router";
+import Button from "@/components/Buttons";
+import Statistic from "@/components/Statistic";
 
 const Home = () => {
-  const { user } = useUser();
+  const [renderType, setRenderType] = useState("home");
 
-  const db = useSQLiteContext();
+  const { user } = useUser();
+  const { type } = useLocalSearchParams<{ type: string }>();
+
   const router = useRouter();
   const logo = require("@/assets/images/BiteRight-Logo-And-Text.png");
   const userAvatar = user?.imageUrl;
+
+  useEffect(() => {
+    setRenderType(type || "home");
+  }, [type]);
 
   useEffect(() => {
     if (
@@ -62,11 +65,10 @@ const Home = () => {
         </TouchableOpacity>
       </Link>
 
-      <Text style={[styles.section, { marginTop: 12 }]}>Today's stats</Text>
-      <Text style={[styles.section, { marginTop: 12 }]}>Health insights</Text>
-      <Text style={[styles.section, { marginTop: 12 }]}>
-        Looking for a snack?
-      </Text>
+      <Text style={[styles.section, { marginTop: 16 }]}>Today's stats</Text>
+      <Statistic email={user?.primaryEmailAddress?.emailAddress as string} />
+      <Text style={styles.section}>Health insights</Text>
+      <Text style={styles.section}>Looking for a snack?</Text>
     </ScrollView>
   );
 };
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
   },
   section: {
     ...defaultStyles.bodyBold,
+    marginVertical: 8,
     left: "7.5%",
   },
 });
