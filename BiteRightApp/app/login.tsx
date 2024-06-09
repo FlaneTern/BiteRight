@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -16,6 +15,7 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 
 import { defaultStyles } from "@/constants/Styles";
+import Button from "@/components/Buttons";
 import Colors from "@/constants/Colors";
 import OAuthButton from "@/components/OAuth";
 
@@ -134,23 +134,9 @@ const Login = () => {
       </TouchableOpacity>
 
       {isSignUp ? (
-        <TouchableOpacity
-          style={[defaultStyles.button, { alignSelf: "center" }]}
-          onPress={onSignUpPress}
-        >
-          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-            Create Account
-          </Text>
-        </TouchableOpacity>
+        <Button title="Create Account" onPress={onSignUpPress} />
       ) : (
-        <TouchableOpacity
-          style={[defaultStyles.button, { alignSelf: "center" }]}
-          onPress={onSignInPress}
-        >
-          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-            Login
-          </Text>
-        </TouchableOpacity>
+        <Button title="Login" onPress={onSignInPress} />
       )}
 
       <Text

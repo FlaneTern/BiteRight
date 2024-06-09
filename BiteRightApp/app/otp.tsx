@@ -1,19 +1,13 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import React, { RefObject, useRef, useState } from "react";
-import { useSignUp } from "@clerk/clerk-expo";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { RefObject, useRef, useState } from "react";
+import { useSignUp } from "@clerk/clerk-expo";
 import { TextInput } from "react-native-gesture-handler";
 
 import { defaultStyles } from "@/constants/Styles";
 import Colors from "@/constants/Colors";
 import OTPInput from "@/components/OTPInput";
+import Buttons from "@/components/Buttons";
 
 const OTPPage = () => {
   const [loading, setLoading] = useState(false);
@@ -104,14 +98,7 @@ const OTPPage = () => {
         onChangeCode={onChangeCode}
         refs={refs}
       />
-      <TouchableOpacity
-        style={[defaultStyles.button, { alignSelf: "center" }]}
-        onPress={onPressContinue}
-      >
-        <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-          Continue
-        </Text>
-      </TouchableOpacity>
+      <Buttons title="Continue" onPress={onPressContinue} />
 
       <Link
         replace

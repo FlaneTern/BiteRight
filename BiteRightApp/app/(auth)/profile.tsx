@@ -41,6 +41,8 @@ import {
   calculateCalories,
   calculateMacronutrients,
 } from "@/utils/CaloriesCount";
+import { dateToISO, formatDate } from "@/utils/DateFormat";
+import Button from "@/components/Buttons";
 
 const ProfilePage = () => {
   const { user } = useUser();
@@ -88,20 +90,6 @@ const ProfilePage = () => {
     setOpen(true);
   };
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "";
-
-    return `${String(date.getDate()).padStart(2, "0")}/${String(
-      date.getMonth() + 1
-    ).padStart(2, "0")}/${String(date.getFullYear())}`;
-  };
-
-  const dateToISO = (date: Date) => {
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-      .toISOString()
-      .split("T")[0];
-  };
-
   const onDateChange = (selectedDate: Date) => {
     setOpen(false);
 
@@ -136,6 +124,14 @@ const ProfilePage = () => {
     const nutrients = calculateMacronutrients(calories);
 
     console.log(canGoBackValue);
+
+    const firstName = name.split(" ")[0];
+    const lastName = name.split(" ").slice(1).join(" ");
+
+    user?.update({
+      firstName,
+      lastName,
+    });
 
     if (canGoBackValue) {
       createUserProfile(db, email as string, {
@@ -349,14 +345,12 @@ const ProfilePage = () => {
           <Entypo name="chevron-thin-down" size={14} color={Colors.c200} />
         )}
       />
-      <TouchableOpacity
-        style={[defaultStyles.button, { alignSelf: "center", marginTop: 32 }]}
+
+      <Button
+        title={canGoBackValue ? "Continue" : "Save"}
         onPress={onContinue}
-      >
-        <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-          {canGoBackValue ? "Continue" : "Save"}
-        </Text>
-      </TouchableOpacity>
+        buttonStyle={{ marginTop: 32 }}
+      />
     </View>
   );
 };

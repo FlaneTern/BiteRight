@@ -1,10 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import { defaultStyles } from "@/constants/Styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import CalorieDetails from "@/components/CalorieDetails";
 import { calculateMacronutrients } from "@/utils/CaloriesCount";
+import Buttons from "@/components/Buttons";
 
 const AllSetPage = () => {
   const complete = require("@/assets/images/All-Set.png");
@@ -36,14 +37,10 @@ const AllSetPage = () => {
         <Text style={styles.appName}> BiteRight</Text>!
       </Text>
 
-      <TouchableOpacity
-        style={[defaultStyles.button, { alignSelf: "center" }]}
+      <Buttons
+        title={"Bring it on!"}
         onPress={() => router.replace("(auth)/(tabs)/home")}
-      >
-        <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-          Bring it on!
-        </Text>
-      </TouchableOpacity>
+      />
     </View>
   );
 };
