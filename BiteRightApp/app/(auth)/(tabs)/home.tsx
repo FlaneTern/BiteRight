@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/clerk-expo";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 
@@ -19,9 +19,13 @@ import Colors from "@/constants/Colors";
 import SearchBar from "@/components/SearchBar";
 import Button from "@/components/Buttons";
 import Statistic from "@/components/Statistic";
+import { FlashList } from "@shopify/flash-list";
+import { ArticleParams, Articles } from "@/constants/Articles";
+import ArticleCard from "@/components/ArticleCard";
 
 const Home = () => {
   const [renderType, setRenderType] = useState("home");
+  const [articles, setArticles] = useState<ArticleParams[]>(Articles);
 
   const { user } = useUser();
   const { type } = useLocalSearchParams<{ type: string }>();
@@ -53,23 +57,41 @@ const Home = () => {
   console.log("🚀 ~ Home ~ result", result);
 
   return (
-    <ScrollView style={defaultStyles.pageContainer}>
-      <View style={styles.imageRow}>
-        <Image source={logo} style={{ width: 73.5, height: 28 }} />
-        <Image source={{ uri: userAvatar }} style={styles.avatar} />
+    <View style={defaultStyles.pageContainer}>
+      <View style={{ flex: 0.25, backgroundColor: Colors.c000 }}>
+        <View style={styles.imageRow}>
+          <Image source={logo} style={{ width: 73.5, height: 28 }} />
+          <Image source={{ uri: userAvatar }} style={styles.avatar} />
+        </View>
+
+        <Link href={"(auth)/product/search"} asChild>
+          <TouchableOpacity activeOpacity={1}>
+            <SearchBar editable={false} prompt="" />
+          </TouchableOpacity>
+        </Link>
       </View>
 
-      <Link href={"(auth)/product/search"} asChild>
-        <TouchableOpacity activeOpacity={1}>
-          <SearchBar editable={false} prompt="" />
-        </TouchableOpacity>
-      </Link>
+      <ScrollView style={{ flex: 1 }}>
+        <Text style={styles.section}>Today's stats</Text>
 
-      <Text style={[styles.section, { marginTop: 16 }]}>Today's stats</Text>
-      <Statistic email={user?.primaryEmailAddress?.emailAddress as string} />
-      <Text style={styles.section}>Health insights</Text>
-      <Text style={styles.section}>Looking for a snack?</Text>
-    </ScrollView>
+        <Statistic email={user?.primaryEmailAddress?.emailAddress as string} />
+
+        <Text style={styles.section}>Health insights</Text>
+
+        <FlashList
+          horizontal
+          data={articles}
+          renderItem={({ item }) => <ArticleCard {...item} />}
+          keyExtractor={(item) => item.id.toString()}
+          estimatedItemSize={5}
+          pagingEnabled
+          bounces={false}
+          showsHorizontalScrollIndicator={false}
+        />
+
+        <Text style={styles.section}>Looking for a snack?</Text>
+      </ScrollView>
+    </View>
   );
 };
 
