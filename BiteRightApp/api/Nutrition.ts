@@ -33,7 +33,7 @@ export async function fetchItemsByName(query: string) {
   }
 }
 
-export async function fetchItemById(queryType: 'upc' | 'nix_item_id', id: string) {
+export async function fetchItemById(queryType: "upc" | "nix_item_id", id: string) {
   const url = `${baseURL}/v2/search/item/?${queryType}=${id}`;
   const headers = {
     "Content-Type": "application/x-www-form-urlencoded",
@@ -57,18 +57,9 @@ export async function fetchNutrients(params: fetchNutrientsParams) {
     "x-app-key": process.env.EXPO_PUBLIC_NUTRITIONIX_APP_KEY,
   };
   const body = {
-    query: params.query,
-    num_servings: params.num_servings ?? 1,
-    aggregate: params.aggregate ?? null,
-    line_delimited: params.line_delimited ?? false,
-    use_raw_foods: params.use_raw_foods ?? false,
-    include_subrecipe: params.include_subrecipe ?? false,
-    timezone: params.timezone ?? 'US/Eastern',
-    consumed_at: params.consumed_at ?? null,
-    use_branded_foods: params.use_branded_foods ?? false,
-    taxonomy: params.taxonomy ?? false,
-    ingredient_statement: params.ingredient_statement ?? false,
-    last_modified: params.last_modified ?? false
+    "query": params.query,
+    "num_servings": params.num_servings ?? 1,
+    "include_subrecipe": true
   };
 
   try {
