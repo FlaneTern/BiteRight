@@ -26,6 +26,7 @@ import { Branded, Common } from "@/constants/Interfaces";
 import { FlashList } from "@shopify/flash-list";
 import FlashListCard from "@/components/FlashListCard";
 import { fetchItemsByName } from "@/api/Nutrition";
+import Separator from "@/components/Separator";
 
 const SearchPage = () => {
   const [loading, setLoading] = useState(false);
@@ -147,11 +148,7 @@ const SearchPage = () => {
             estimatedItemSize={50}
             keyExtractor={(item) => item.nix_item_id || item.food_name}
             renderItem={({ item }) => <FlashListCard items={item} />}
-            ItemSeparatorComponent={() => (
-              <View
-                style={{ borderBottomWidth: 1, borderBottomColor: Colors.c100 }}
-              />
-            )}
+            ItemSeparatorComponent={() => <Separator />}
           />
         )}
       </View>
