@@ -68,7 +68,11 @@ const Accordion = (props: Props) => {
 
   return (
     <View style={styles.mainContainer}>
-      <TouchableOpacity style={styles.header} onPress={headerPressHandler}>
+      <TouchableOpacity
+        style={styles.header}
+        onPress={headerPressHandler}
+        activeOpacity={0.8}
+      >
         <Text style={styles.headerText}>{headerText}</Text>
         <Animated.View style={animatedRotation}>{icon}</Animated.View>
       </TouchableOpacity>
@@ -90,8 +94,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     width: "85%",
     overflow: "hidden",
-    marginBottom: 10,
     alignSelf: "center",
+    marginTop: 24,
+    marginBottom: 16,
   },
   header: {
     flexDirection: "row",
