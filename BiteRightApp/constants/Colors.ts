@@ -16,6 +16,7 @@ export default {
   blue3: "#AAD9ED",
   blue4: "#D0F0FE",
   c000: "#FFFFFF",
+  c050: "#F0ECEC",
   c100: "#D9D7D7",
   c200: "#888888",
   c300: "#444444",

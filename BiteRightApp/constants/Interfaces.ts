@@ -63,7 +63,7 @@ export interface ConsumptionParams {
   history_id?: number;
   user_id: number;
   consumed_at?: string;
-  food_id: number;
+  food_id: string;
   food_image: string;
   food_name: string;
   calories: number;

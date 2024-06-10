@@ -10,6 +10,8 @@ export async function migrateDBIfNeeded(db: SQLiteDatabase) {
   let result = await db.getFirstAsync<{ user_version: number }>("PRAGMA user_version");
   let currentDBVersion = result?.user_version ?? 0;
 
+  console.log("Current DB Version: ", currentDBVersion)
+
   if (currentDBVersion >= DATABASE_VERSION) {
     console.log("Database is up to date");
 
@@ -69,7 +71,7 @@ export async function migrateDBIfNeeded(db: SQLiteDatabase) {
         history_id      INTEGER   NOT NULL  PRIMARY KEY AUTOINCREMENT,
         user_id         INTEGER   NOT NULL,
         consumed_at     TEXT      NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-        food_id         INTEGER   NOT NULL,
+        food_id         TEXT      NOT NULL,
         food_image      TEXT,
         food_name       TEXT,
         calories        REAL,
