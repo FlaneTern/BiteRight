@@ -28,7 +28,7 @@ const FlashListCard: React.FC<FlashListCardProps> = ({ items }) => {
         pathname: "/(auth)/product/[id]",
         params: {
           id: isBranded ? items.nix_item_id : items.food_name,
-          type: "nix",
+          type: isBranded ? "nix" : "foodname",
         },
       }}
     >

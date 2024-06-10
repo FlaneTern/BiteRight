@@ -54,8 +54,8 @@ const Statistic = (params: StatisticProps) => {
   }, [db, email]);
 
   useEffect(() => {
-    end.value = withTiming(progress / max, { duration: 750 });
-  }, []);
+    end.value = withTiming(progress / max || 0, { duration: 750 });
+  }, [max, progress]);
 
   return (
     <View style={styles.container}>
