@@ -30,7 +30,7 @@ const TransitionPage = () => {
         createUser(db, userEmail!, userPassword, isOAuth);
 
         router.replace({
-          pathname: "/profile",
+          pathname: "/(settings)/profile",
           params: { canGoBack: "false" },
         });
       }

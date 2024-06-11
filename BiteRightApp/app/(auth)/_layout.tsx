@@ -12,6 +12,7 @@ const Layout = () => {
     <Stack>
       <Stack.Screen name="transition" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(settings)" options={{ headerShown: false }} />
       <Stack.Screen
         name="product/search"
         options={{ headerShown: false, animation: "none" }}
@@ -48,17 +49,6 @@ const Layout = () => {
               <FontAwesome6 name="chevron-left" size={22} color={Colors.c300} />
             </TouchableOpacity>
           ),
-        }}
-      />
-      <Stack.Screen
-        name="profile"
-        options={{
-          title: "Edit Profile",
-          headerTitleAlign: "center",
-          headerTitleStyle: { ...defaultStyles.heading2 },
-          headerBackVisible: false,
-          headerShadowVisible: false,
-          headerTransparent: true,
         }}
       />
       <Stack.Screen name="allset" options={{ headerShown: false }} />
