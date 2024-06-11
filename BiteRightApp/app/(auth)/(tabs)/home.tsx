@@ -1,27 +1,23 @@
-import Animated from "react-native-reanimated";
 import {
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  Touchable,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useEffect, useRef, useState } from "react";
-import { useUser } from "@clerk/clerk-expo";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-
-import { defaultStyles } from "@/constants/Styles";
-import { useSQLiteContext } from "expo-sqlite";
-import { loginStorage } from "@/utils/Storage";
-import Colors from "@/constants/Colors";
-import SearchBar from "@/components/SearchBar";
-import Button from "@/components/Buttons";
-import Statistic from "@/components/Statistic";
+import { useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
+import { useUser } from "@clerk/clerk-expo";
+
 import { ArticleParams, Articles } from "@/constants/Articles";
+import { defaultStyles } from "@/constants/Styles";
+import { loginStorage } from "@/utils/Storage";
 import ArticleCard from "@/components/ArticleCard";
+import SearchBar from "@/components/SearchBar";
+import Statistic from "@/components/Statistic";
+import Colors from "@/constants/Colors";
 
 const Home = () => {
   const [renderType, setRenderType] = useState("home");
@@ -57,8 +53,8 @@ const Home = () => {
   console.log("🚀 ~ Home ~ result", result);
 
   return (
-    <View style={defaultStyles.pageContainer}>
-      <View style={{ flex: 0.25, backgroundColor: Colors.c000 }}>
+    <View style={[defaultStyles.pageContainer]}>
+      <View style={[styles.header]}>
         <View style={styles.imageRow}>
           <Image source={logo} style={{ width: 73.5, height: 28 }} />
           <Image source={{ uri: userAvatar }} style={styles.avatar} />
@@ -71,7 +67,10 @@ const Home = () => {
         </Link>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1, marginTop: -8 }}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.section}>Today's stats</Text>
 
         <Statistic email={user?.primaryEmailAddress?.emailAddress as string} />
@@ -83,7 +82,7 @@ const Home = () => {
           data={articles}
           renderItem={({ item }) => <ArticleCard {...item} />}
           keyExtractor={(item) => item.id.toString()}
-          estimatedItemSize={5}
+          estimatedItemSize={2}
           pagingEnabled
           bounces={false}
           showsHorizontalScrollIndicator={false}
@@ -96,6 +95,13 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    height: 140,
+    backgroundColor: Colors.c000,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    zIndex: 2,
+  },
   imageRow: {
     width: "85%",
     marginTop: 48,
