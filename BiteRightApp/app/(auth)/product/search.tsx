@@ -9,24 +9,22 @@ import Animated, {
 import {
   ActivityIndicator,
   Dimensions,
-  Pressable,
-  StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import SearchBar from "@/components/SearchBar";
-import { defaultStyles } from "@/constants/Styles";
-import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
-import { Branded, Common } from "@/constants/Interfaces";
 import { FlashList } from "@shopify/flash-list";
+import { useRouter } from "expo-router";
+
 import FlashListCard from "@/components/FlashListCard";
-import { fetchItemsByName } from "@/api/Nutrition";
+import SearchBar from "@/components/SearchBar";
 import Separator from "@/components/Separator";
+import Colors from "@/constants/Colors";
+import { fetchItemsByName } from "@/api/Nutrition";
+import { Branded, Common } from "@/constants/Interfaces";
+import { defaultStyles } from "@/constants/Styles";
 
 const SearchPage = () => {
   const [loading, setLoading] = useState(false);
