@@ -1,17 +1,25 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useRef } from "react";
 import { defaultStyles } from "@/constants/Styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Image } from "react-native";
 import SettingBlocks from "@/components/SettingBlocks";
+import { useFocusEffect } from "expo-router";
 
 const SettingsPage = () => {
   const { user } = useUser();
+
   const profileImage = user?.imageUrl;
   const name = user?.firstName + " " + user?.lastName;
+  const scrollRef = useRef<ScrollView>(null);
+
+  useFocusEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  });
 
   return (
     <ScrollView
+      ref={scrollRef}
       style={defaultStyles.pageContainer}
       showsVerticalScrollIndicator={false}
       bounces={false}
@@ -22,9 +30,14 @@ const SettingsPage = () => {
       <View style={{ gap: 24, marginTop: 32 }}>
         <View>
           <Text style={styles.section}>Account</Text>
-          <SettingBlocks name="Edit Profile" path="/(settings)/profile" top />
-          <SettingBlocks name="Change Email" path="" />
-          <SettingBlocks name="Change Password" path="" bottom />
+          <SettingBlocks
+            name="Edit Profile"
+            path="/(settings)/profile"
+            params={{ canGoBack: "true" }}
+            top
+          />
+          <SettingBlocks name="Change Email" />
+          <SettingBlocks name="Change Password" bottom />
         </View>
         <View>
           <Text style={styles.section}>Diet</Text>
@@ -33,14 +46,14 @@ const SettingsPage = () => {
         </View>
         <View>
           <Text style={styles.section}>History</Text>
-          <SettingBlocks name="Intake History" path="" top />
-          <SettingBlocks name="Payment History" path="" bottom />
+          <SettingBlocks name="Intake History" path="history/intake" top />
+          <SettingBlocks name="Payment History" bottom />
         </View>
-        <View style={{ marginBottom: 40 }}>
+        <View style={{ marginBottom: 48 }}>
           <Text style={styles.section}>Others</Text>
-          <SettingBlocks name="Notification" path="" top />
-          <SettingBlocks name="Privacy and Security" path="" />
-          <SettingBlocks name="Log Out" path="" bottom />
+          <SettingBlocks name="Notification" top />
+          <SettingBlocks name="Privacy and Security" path="other" />
+          <SettingBlocks name="Log Out" bottom logout />
         </View>
       </View>
     </ScrollView>
@@ -59,7 +72,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   name: {
-    width: "50%",
+    width: "70%",
     marginTop: 8,
     ...defaultStyles.heading2,
     textAlign: "center",

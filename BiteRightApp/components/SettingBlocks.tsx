@@ -1,8 +1,16 @@
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
 import { Entypo } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
 
 interface SettingBlocksProps {
   name: string;
@@ -10,10 +18,14 @@ interface SettingBlocksProps {
   params?: any;
   top?: boolean;
   bottom?: boolean;
+  logout?: boolean;
 }
 
 const SettingBlocks = (input: SettingBlocksProps) => {
-  const { name, path, params, top, bottom } = input;
+  const { name, path, params, top, bottom, logout } = input;
+  const { signOut } = useAuth();
+
+  const router = useRouter();
 
   const topBorder: ViewStyle = {
     borderTopLeftRadius: 8,
@@ -33,11 +45,30 @@ const SettingBlocks = (input: SettingBlocksProps) => {
     ...(bottom ? bottomBorder : {}),
   };
 
+  const onPress = () => {
+    if (path)
+      router.push({
+        pathname: path,
+        params: params,
+      });
+    if (logout) {
+      signOut();
+      router.replace({
+        pathname: "/login",
+        params: { type: "login" },
+      });
+    }
+  };
+
   return (
-    <View style={containerStyle}>
+    <TouchableOpacity
+      style={containerStyle}
+      activeOpacity={0.8}
+      onPress={onPress}
+    >
       <Text style={styles.text}>{name}</Text>
       <Entypo name="chevron-thin-right" size={14} color={Colors.c300} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
