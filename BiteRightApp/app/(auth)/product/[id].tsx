@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -43,7 +44,7 @@ export default function ProductPage() {
   const db = useSQLiteContext();
   const icon = <Entypo name="chevron-thin-up" size={16} color={Colors.c300} />;
 
-  const handlePress = () => {
+  const _handlePress = () => {
     if (type === "ean") {
       router.navigate("/(auth)/(tabs)/home");
     } else {
@@ -62,8 +63,12 @@ export default function ProductPage() {
       fats: data[0].fat,
       protein: data[0].protein,
     } as ConsumptionParams);
+  };
 
-    router.navigate("/(auth)/(tabs)/home");
+  const onPress = () => {
+    addFood();
+
+    router.replace("/(auth)/(tabs)/home");
   };
 
   useEffect(() => {
@@ -95,11 +100,15 @@ export default function ProductPage() {
 
   if (data.length === 0) {
     return (
-      <View style={defaultStyles.pageContainer}>
-        <Text>Loading...</Text>
-      </View>
+      <ActivityIndicator
+        size="large"
+        style={styles.loading}
+        color={Colors.main}
+      />
     );
   }
+
+  data[0].ingredients = Array.from(new Set(data[0].ingredients));
 
   return (
     <ScrollView
@@ -115,7 +124,7 @@ export default function ProductPage() {
       <Stack.Screen
         options={{
           headerLeft: () => (
-            <TouchableOpacity onPress={handlePress} style={styles.backButton}>
+            <TouchableOpacity onPress={_handlePress} style={styles.backButton}>
               <FontAwesome6 name="chevron-left" size={22} color={Colors.c300} />
             </TouchableOpacity>
           ),
@@ -173,7 +182,7 @@ export default function ProductPage() {
                 <Text style={styles.ingredients}>{item}</Text>
               )}
               estimatedItemSize={30}
-              keyExtractor={(item) => item}
+              keyExtractor={(item, index) => `${item}-${index}`}
               ItemSeparatorComponent={() => <Separator />}
             />
           </View>
@@ -183,7 +192,7 @@ export default function ProductPage() {
       </View>
 
       <View style={styles.buttonArea}>
-        <Button title="Add to Intake" onPress={addFood} />
+        <Button title="Add to Intake" onPress={onPress} />
         <Button
           title="Cancel"
           onPress={() => router.navigate("/(auth)/(tabs)/home")}
@@ -200,6 +209,12 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loading: {
+    flex: 1,
+    backgroundColor: Colors.c000,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -233,7 +248,7 @@ const styles = StyleSheet.create({
   ingredients: {
     ...defaultStyles.body,
     minHeight: 38,
-    marginVertical: 12,
+    marginVertical: 6,
     textAlignVertical: "center",
   },
   buttonArea: {

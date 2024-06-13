@@ -1,23 +1,20 @@
 import {
   StyleSheet,
   Text,
+  Image,
   TouchableOpacity,
-  View,
   useWindowDimensions,
 } from "react-native";
-import React from "react";
-import { Image } from "react-native";
-import { ArticleParams } from "@/constants/Articles";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+
 import Colors from "@/constants/Colors";
-import { Link, useRouter } from "expo-router";
+import { ArticleParams } from "@/constants/Articles";
 import { defaultStyles } from "@/constants/Styles";
 
 const ArticleCard = (params: ArticleParams) => {
   const { id, title, image } = params;
   const { width } = useWindowDimensions();
-
-  console.log(width);
 
   const router = useRouter();
 

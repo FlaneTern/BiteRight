@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TextStyle, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as Progress from "react-native-progress";
 import { defaultStyles } from "@/constants/Styles";
@@ -10,10 +10,11 @@ interface CalorieIndicatorProps {
   calories: number;
   nutritions: string;
   circle?: boolean;
+  textStyle?: TextStyle;
 }
 
 const CalorieIndicator = (params: CalorieIndicatorProps) => {
-  const { color, amount, calories, nutritions, circle } = params;
+  const { color, amount, calories, nutritions, circle, textStyle } = params;
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const CalorieIndicator = (params: CalorieIndicatorProps) => {
         (amount * (nutritions === "fat" ? 9 : 4)) / calories;
 
       setPercentage(nutritionPercentage);
-    }, 350);
+    }, 1000);
   }, []);
 
   return (
@@ -30,7 +31,7 @@ const CalorieIndicator = (params: CalorieIndicatorProps) => {
       {circle ? (
         <View style={styles.circleContainer}>
           <Progress.Circle
-            progress={percentage}
+            progress={percentage ?? 0}
             color={color}
             size={64}
             unfilledColor={Colors.c050}
@@ -48,7 +49,7 @@ const CalorieIndicator = (params: CalorieIndicatorProps) => {
         <View style={styles.barContainer}>
           <View style={{ left: -12 }}>
             <Progress.Bar
-              progress={percentage}
+              progress={percentage || 0}
               color={color}
               borderRadius={0}
               borderColor="transparent"
@@ -58,9 +59,12 @@ const CalorieIndicator = (params: CalorieIndicatorProps) => {
             />
           </View>
           <View style={styles.barText}>
-            <Text style={defaultStyles.body}>{`${
-              amount || 0
-            }g\n${nutritions}`}</Text>
+            <Text style={[defaultStyles.body, { top: 5 }, textStyle]}>
+              {`${amount || 0}g`}
+            </Text>
+            <Text style={[defaultStyles.body, textStyle]}>
+              {`${nutritions}`}
+            </Text>
           </View>
         </View>
       )}
@@ -89,7 +93,6 @@ const styles = StyleSheet.create({
   barText: {
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
     left: -20,
     top: -2,
   },

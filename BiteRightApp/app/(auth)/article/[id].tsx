@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "85%",
     alignSelf: "center",
-    marginBottom: 48,
+    marginBottom: 32,
   },
   title: {
     ...defaultStyles.heading2,

@@ -76,18 +76,15 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (prompt) {
-        onSearch();
-        setLoading(true);
-      }
-    }, 750);
-
     if (!prompt) {
       setResponse({ branded: [], common: [] });
+      return;
     }
 
-    return () => clearTimeout(delayDebounceFn);
+    setTimeout(() => {
+      setLoading(true);
+      onSearch();
+    }, 750);
   }, [prompt]);
 
   const backButton: ViewStyle = {
@@ -116,7 +113,12 @@ const SearchPage = () => {
           style={{ zIndex: 10 }}
         >
           <TouchableOpacity
-            onPress={() => router.navigate("(tabs)/home")}
+            onPress={() =>
+              router.replace({
+                pathname: "/(tabs)/home",
+                params: { type: "return" },
+              })
+            }
             style={backButton}
           >
             <FontAwesome6 name="chevron-left" size={24} color={Colors.c300} />

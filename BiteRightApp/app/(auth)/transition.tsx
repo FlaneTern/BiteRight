@@ -41,7 +41,7 @@ const TransitionPage = () => {
     <ActivityIndicator
       size="large"
       style={defaultStyles.loadingOverlay}
-      color={Colors.c000}
+      color={Colors.main}
     />
   );
 };

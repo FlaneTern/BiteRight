@@ -9,10 +9,11 @@ interface ProgressProps {
   radius: number;
   strokeWidth: number;
   end: SharedValue<number>;
+  text?: string;
 }
 
 const DailyProgress = (params: ProgressProps) => {
-  const { radius, strokeWidth, end } = params;
+  const { radius, strokeWidth, end, text } = params;
 
   const innerRadius = radius - strokeWidth / 2;
 
@@ -55,7 +56,7 @@ const DailyProgress = (params: ProgressProps) => {
           end={end}
         />
       </Canvas>
-      <Text style={textStyle}>🤩</Text>
+      <Text style={textStyle}>{text}</Text>
     </View>
   );
 };
