@@ -59,10 +59,33 @@ const Layout = () => {
         }}
       />
       <Stack.Screen
-        name="history"
+        name="history/intake"
         options={{
           title: "Intake History",
           headerTitleStyle: { ...defaultStyles.heading2 },
+          headerTitleAlign: "center",
+          headerShadowVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.back()}
+              style={{
+                width: 30,
+                height: 30,
+                marginLeft: 12,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FontAwesome6 name="chevron-left" size={22} color={Colors.c300} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="history/[id]"
+        options={{
+          title: "",
           headerTitleAlign: "center",
           headerShadowVisible: false,
           headerLeft: () => (
