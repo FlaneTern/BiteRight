@@ -1,13 +1,13 @@
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from "expo-router";
-import { useFonts } from "expo-font";
-import { useEffect, useState } from "react";
 import { ClerkProvider, useAuth, useUser } from "@clerk/clerk-expo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useEffect, useState } from "react";
+import { SQLiteProvider } from "expo-sqlite";
+import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
-import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 
+import { migrateDBIfNeeded } from "@/utils/Database";
 import { defaultStyles } from "@/constants/Styles";
-import { isUserProfileComplete, migrateDBIfNeeded } from "@/utils/Database";
 import { loginStorage } from "@/utils/Storage";
 
 SplashScreen.preventAutoHideAsync();
@@ -37,8 +37,6 @@ const InitialLayout = () => {
     RobotoFlex: require("../assets/fonts/RobotoFlex-Regular.ttf"),
   });
   const [profileComplete, setProfileComplete] = useState(false);
-  const [userEmail, setEmail] = useState<string | null>(null);
-  const [loadComplete, setLoadComplete] = useState(false);
 
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
@@ -47,13 +45,6 @@ const InitialLayout = () => {
   const segments = useSegments();
   const email = user?.primaryEmailAddress?.emailAddress;
   const inAuthTabsGroup = segments[0] === "(auth)" && segments[1] === "(tabs)";
-  // console.log("🚀 ~ InitialLayout ~ segments:", segments);
-  // console.log("🚀 ~ InitialLayout ~ loadComplete:", loadComplete);
-  // console.log("🚀 ~ InitialLayout ~ execute:", execute);
-  // console.log("🚀 ~ InitialLayout ~ email:", email);
-  // console.log("🚀 ~ InitialLayout ~ isSignedIn:", isSignedIn);
-  // console.log("🚀 ~ InitialLayout ~ isLoaded:", isLoaded);
-  // console.log("🚀 ~ InitialLayout ~ user:", user);
 
   const checkCompletion = () => {
     if (email) {
@@ -67,15 +58,8 @@ const InitialLayout = () => {
     if (error) throw error;
   }, [error]);
 
-  // useEffect(() => {
-  //   if (loaded) {
-  //     SplashScreen.hideAsync();
-  //   }
-  // }, [loaded]);
-
   useEffect(() => {
     if (email) {
-      setEmail(email);
       checkCompletion();
     }
   }, [email]);
