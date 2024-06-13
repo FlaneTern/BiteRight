@@ -6,7 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Link,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import { useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useUser } from "@clerk/clerk-expo";
@@ -18,39 +23,37 @@ import ArticleCard from "@/components/ArticleCard";
 import SearchBar from "@/components/SearchBar";
 import Statistic from "@/components/Statistic";
 import Colors from "@/constants/Colors";
+import { recommendedItem } from "@/constants/Options";
+import Recommended from "@/components/RecommendedCard";
 
 const Home = () => {
   const [renderType, setRenderType] = useState("home");
-  const [articles, setArticles] = useState<ArticleParams[]>(Articles);
 
   const { user } = useUser();
   const { type } = useLocalSearchParams<{ type: string }>();
 
-  const router = useRouter();
   const logo = require("@/assets/images/BiteRight-Logo-And-Text.png");
   const userAvatar = user?.imageUrl;
+  const articles = Articles as ArticleParams[];
 
   useEffect(() => {
     setRenderType(type || "home");
   }, [type]);
 
   useEffect(() => {
-    if (
-      !loginStorage.contains(
-        `complete_${user?.primaryEmailAddress?.emailAddress}`
-      )
-    ) {
-      loginStorage.set(
-        `complete_${user?.primaryEmailAddress?.emailAddress}`,
-        true
-      );
+    if (user) {
+      if (
+        !loginStorage.contains(
+          `complete_${user?.primaryEmailAddress?.emailAddress}`
+        )
+      ) {
+        loginStorage.set(
+          `complete_${user?.primaryEmailAddress?.emailAddress}`,
+          true
+        );
+      }
     }
-  }, [user !== undefined]);
-
-  const result = loginStorage.getBoolean(
-    `complete_${user?.primaryEmailAddress?.emailAddress}`
-  );
-  console.log("🚀 ~ Home ~ result", result);
+  }, [user]);
 
   return (
     <View style={[defaultStyles.pageContainer]}>
@@ -89,6 +92,15 @@ const Home = () => {
         />
 
         <Text style={styles.section}>Looking for a snack?</Text>
+        <FlashList
+          data={recommendedItem}
+          renderItem={({ item }) => <Recommended data={item} />}
+          keyExtractor={(item) => item.food_name}
+          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          estimatedItemSize={200}
+          ListFooterComponentStyle={{ marginBottom: 48 }}
+        />
+        {/* <Recommended data={recommendedItem[0]} /> */}
       </ScrollView>
     </View>
   );
@@ -120,7 +132,8 @@ const styles = StyleSheet.create({
   },
   section: {
     ...defaultStyles.bodyBold,
-    marginVertical: 8,
+    marginTop: 16,
+    marginBottom: 8,
     left: "7.5%",
   },
 });
