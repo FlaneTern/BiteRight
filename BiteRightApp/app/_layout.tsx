@@ -8,6 +8,7 @@ import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 
 import { defaultStyles } from "@/constants/Styles";
 import { isUserProfileComplete, migrateDBIfNeeded } from "@/utils/Database";
+import { loginStorage } from "@/utils/Storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -36,20 +37,29 @@ const InitialLayout = () => {
     RobotoFlex: require("../assets/fonts/RobotoFlex-Regular.ttf"),
   });
   const [profileComplete, setProfileComplete] = useState(false);
+  const [userEmail, setEmail] = useState<string | null>(null);
+  const [loadComplete, setLoadComplete] = useState(false);
 
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
 
   const router = useRouter();
   const segments = useSegments();
-  const db = useSQLiteContext();
   const email = user?.primaryEmailAddress?.emailAddress;
+  const inAuthTabsGroup = segments[0] === "(auth)" && segments[1] === "(tabs)";
+  // console.log("🚀 ~ InitialLayout ~ segments:", segments);
+  // console.log("🚀 ~ InitialLayout ~ loadComplete:", loadComplete);
+  // console.log("🚀 ~ InitialLayout ~ execute:", execute);
+  // console.log("🚀 ~ InitialLayout ~ email:", email);
+  // console.log("🚀 ~ InitialLayout ~ isSignedIn:", isSignedIn);
+  // console.log("🚀 ~ InitialLayout ~ isLoaded:", isLoaded);
+  // console.log("🚀 ~ InitialLayout ~ user:", user);
 
-  const checkCompletion = async () => {
+  const checkCompletion = () => {
     if (email) {
-      const complete = await isUserProfileComplete(db, email);
-
-      setProfileComplete(complete);
+      if (loginStorage.contains(`complete_${email}`)) {
+        setProfileComplete(true);
+      }
     }
   };
 
@@ -57,29 +67,39 @@ const InitialLayout = () => {
     if (error) throw error;
   }, [error]);
 
+  // useEffect(() => {
+  //   if (loaded) {
+  //     SplashScreen.hideAsync();
+  //   }
+  // }, [loaded]);
+
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (email) {
+      setEmail(email);
+      checkCompletion();
     }
-  }, [loaded]);
+  }, [email]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    console.log("🚀 ~ InitialLayout ~ inAuthTabsGroup:", inAuthTabsGroup);
+    console.log("🚀 ~ InitialLayout ~ isSignedIn:", isSignedIn);
+    console.log("🚀 ~ InitialLayout ~ profileComplete:", profileComplete);
 
-    checkCompletion();
-    const inAuthGroup = segments[0] === "(auth)";
-
-    if (isSignedIn && !inAuthGroup && profileComplete) {
+    if (isSignedIn && profileComplete && !inAuthTabsGroup) {
       router.replace("(auth)/(tabs)/home");
     } else if (isSignedIn && !profileComplete) {
       router.replace({
         pathname: "/(auth)/profile",
-        params: { canGoBack: "false" },
+        params: { canGoBack: "false", email: email },
       });
     } else if (!isSignedIn) {
-      router.replace("/");
+      router.replace("/login");
     }
-  }, [isSignedIn]);
+
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 1000);
+  }, [profileComplete]);
 
   if (!loaded || !isLoaded) {
     return <Slot />;
@@ -88,7 +108,10 @@ const InitialLayout = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="login"
+        options={{ headerShown: false, animation: "none" }}
+      />
       <Stack.Screen
         name="otp"
         options={{

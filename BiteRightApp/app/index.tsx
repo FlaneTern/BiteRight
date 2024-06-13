@@ -1,14 +1,13 @@
-import React from "react";
-import { View } from "react-native";
-
-import { defaultStyles } from "../constants/Styles";
-import Login from "./login";
+import { Redirect } from "expo-router";
 
 const Index = () => {
   return (
-    <View style={defaultStyles.pageContainer}>
-      <Login />
-    </View>
+    <Redirect
+      href={{
+        pathname: "/login",
+        params: { type: "login" },
+      }}
+    />
   );
 };
 
