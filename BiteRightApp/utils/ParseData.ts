@@ -43,12 +43,12 @@ export function parseDataEAN(data: any): ParsedData[] {
     food: data.product?.product_name || "",
     quantity: data.product?.quantity || "",
     image: data.product?.image_url || "",
-    calories: data.product?.nutriments?.energy_100g || "",
-    carbohydrates: data.product?.nutriments?.carbohydrates_100g || "",
-    fat: data.product?.nutriments?.fat_100g || "",
-    sugar: data.product?.nutriments?.sugars_100g || "",
-    protein: data.product?.nutriments?.proteins_100g || "",
-    ingredients: data.product?.ingredients?.map((ingredient: any) => ingredient.text) || []
+    calories: data.product?.nutriments?.energy_100g || 0,
+    carbohydrates: data.product?.nutriments?.carbohydrates_100g || 0,
+    fat: data.product?.nutriments?.fat_100g || 0,
+    sugar: data.product?.nutriments?.sugars_100g || 0,
+    protein: data.product?.nutriments?.proteins_100g || 0,
+    ingredients: data.product?.ingredients?.map((ingredient: any) => titleCase(ingredient.text)) || []
   }];
 }
 
@@ -58,11 +58,11 @@ export function parseDataNutritionix(data: any): ParsedData[] {
     quantity: food.serving_qty ? `${food.serving_qty}${food.serving_unit}` : "",
     weight: food.serving_weight_grams ? `${food.serving_weight_grams}g` : "",
     image: food.photo?.highres || food.photo?.thumb || "",
-    calories: food.nf_calories || "",
-    carbohydrates: food.nf_total_carbohydrate || "",
-    fat: food.nf_total_fat || "",
-    sugar: food.nf_sugars || "",
-    protein: food.nf_protein || "",
+    calories: food.nf_calories || 0,
+    carbohydrates: food.nf_total_carbohydrate || 0,
+    fat: food.nf_total_fat || 0,
+    sugar: food.nf_sugars || 0,
+    protein: food.nf_protein || 0,
     ingredients: food.nf_ingredient_statement ? parseIngredients(food.nf_ingredient_statement) : []
   }));
 }

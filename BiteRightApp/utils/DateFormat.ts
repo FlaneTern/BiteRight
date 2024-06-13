@@ -11,3 +11,13 @@ export const dateToISO = (date: Date) => {
     .toISOString()
     .split("T")[0];
 };
+
+export const formatToDayMonthDay = (date: Date) => {
+  if (!date) return "";
+
+  return `${date.toLocaleDateString("en-ca", {
+    weekday: "short",
+  })}, ${date.toLocaleDateString("en-ca", {
+    month: "short",
+  })} ${date.getDate()}`;
+};

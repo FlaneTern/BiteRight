@@ -253,6 +253,24 @@ export const fetchUserProfile = async (db: SQLiteDatabase, email: string) => {
   };
 };
 
+export const fetchUserDietInfo = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<DietParams>(`
+    SELECT * 
+    FROM user_diet ud 
+    JOIN users u ON ud.user_id = u.user_id 
+    WHERE u.email = ?`,
+    [email]
+  );
+
+  return result ?? {
+    id: 0,
+    user_id: 0,
+    activity_level: "",
+    health_goal: "",
+    updated_at: "",
+  };
+}
+
 export const getName = async (db: SQLiteDatabase, email: string) => {
   const result = await db.getFirstAsync<{ name: string }>(`
     SELECT name 
@@ -288,6 +306,41 @@ export const getConsumptionHistory = async (db: SQLiteDatabase, email: string, d
 
   return result;
 };
+
+export const getUserLimit = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<IntakeParams>(`
+    SELECT * 
+    FROM user_intake_limit ul 
+    JOIN users u ON ul.user_id = u.user_id 
+    WHERE u.email = ?`,
+    [email]
+  );
+
+  return result ?? {
+    id: 0,
+    user_id: 0,
+    calories: 0,
+    carbohydrates: 0,
+    sugar: 0,
+    fats: 0,
+    protein: 0,
+    updated_at: "",
+  };
+}
+
+export const getEarliestConsumptionDate = async (db: SQLiteDatabase, email: string) => {
+  const result = await db.getFirstAsync<{ consumed_at: string }>(`
+    SELECT consumed_at 
+    FROM consumption_history ch 
+    JOIN users u ON ch.user_id = u.user_id 
+    WHERE u.email = ? 
+    ORDER BY consumed_at ASC 
+    LIMIT 1`,
+    [email]
+  );
+
+  return result?.consumed_at;
+}
 
 // UPDATE METHODS
 
