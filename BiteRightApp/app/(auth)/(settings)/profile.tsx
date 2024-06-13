@@ -8,14 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
-import { useSQLiteContext } from "expo-sqlite";
-import { Dropdown } from "react-native-element-dropdown";
-import { useEffect, useState } from "react";
-import { useUser } from "@clerk/clerk-expo";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Entypo, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { useUser } from "@clerk/clerk-expo";
 
 import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
@@ -23,6 +22,7 @@ import {
   createUserDietInfo,
   createUserIntakeLimit,
   createUserProfile,
+  fetchUserDietInfo,
   fetchUserProfile,
   updateUserDietInfo,
   updateUserIntakeLimit,
@@ -43,6 +43,7 @@ import {
 } from "@/utils/CaloriesCount";
 import { dateToISO, formatDate } from "@/utils/DateFormat";
 import Button from "@/components/Buttons";
+import DropdownList from "@/components/DropdownList";
 
 const ProfilePage = () => {
   const { user } = useUser();
@@ -55,6 +56,8 @@ const ProfilePage = () => {
   const router = useRouter();
   const canGoBackValue = canGoBack === "false";
   const userEmail = email || user?.primaryEmailAddress?.emailAddress;
+
+  console.log("🚀 ~ ProfilePage ~ userEmail", userEmail);
 
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(user?.fullName || "");
@@ -86,13 +89,11 @@ const ProfilePage = () => {
 
   const onCalendarPress = () => {
     Keyboard.dismiss();
-
     setOpen(true);
   };
 
   const onDateChange = (selectedDate: Date) => {
     setOpen(false);
-
     setDateOfBirth(selectedDate);
   };
 
@@ -122,8 +123,6 @@ const ProfilePage = () => {
     });
 
     const nutrients = calculateMacronutrients(calories);
-
-    console.log(canGoBackValue);
 
     const firstName = name.split(" ")[0];
     const lastName = name.split(" ").slice(1).join(" ");
@@ -155,9 +154,6 @@ const ProfilePage = () => {
         protein: nutrients.protein,
       });
 
-      const userProfile = fetchUserProfile(db, email as string);
-      console.log("🚀 ~ onContinue ~ userProfile", userProfile);
-
       loginStorage.set(`complete_${email}`, true);
 
       router.replace({
@@ -166,7 +162,7 @@ const ProfilePage = () => {
       });
     } else {
       if (userEmail) {
-        updateUserProfile(db, email as string, {
+        updateUserProfile(db, userEmail, {
           name,
           date_of_birth: dateToISO(dateOfBirth),
           gender,
@@ -174,12 +170,12 @@ const ProfilePage = () => {
           weight: formattedWeight,
         });
 
-        updateUserDietInfo(db, email as string, {
+        updateUserDietInfo(db, userEmail, {
           activity_level: activityLevel,
           health_goal: goal,
         });
 
-        updateUserIntakeLimit(db, email as string, {
+        updateUserIntakeLimit(db, userEmail, {
           calories,
           carbohydrates: nutrients.carbohydrates,
           sugar: nutrients.sugar,
@@ -192,17 +188,51 @@ const ProfilePage = () => {
     }
   };
 
+  useEffect(() => {
+    if (userEmail) {
+      fetchUserProfile(db, userEmail).then((profile) => {
+        if (profile) {
+          setName(profile.name);
+          setDateOfBirth(new Date(profile.date_of_birth));
+          setGender(profile.gender);
+          setHeight(profile.height.toString());
+          setWeight(profile.weight.toString());
+        }
+      });
+
+      fetchUserDietInfo(db, userEmail).then((dietInfo) => {
+        if (dietInfo) {
+          setActivityLevel(dietInfo.activity_level);
+          setGoal(dietInfo.health_goal);
+        }
+      });
+    }
+  }, [userEmail]);
+
   return (
     <View style={defaultStyles.pageContainer}>
       <Stack.Screen
         options={{
+          headerTransparent: true,
           headerLeft: canGoBackValue
             ? undefined
             : () => (
                 <TouchableOpacity
-                  onPress={() => router.navigate("(tabs)/home")}
+                  onPress={() => router.back()}
+                  activeOpacity={0.8}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    marginLeft: 12,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  <AntDesign name="left" size={24} color={Colors.c400} />
+                  <FontAwesome6
+                    name="chevron-left"
+                    size={22}
+                    color={Colors.c300}
+                  />
                 </TouchableOpacity>
               ),
         }}
@@ -263,24 +293,13 @@ const ProfilePage = () => {
       )}
 
       <Text style={styles.text}>Sex</Text>
-      <Dropdown
-        style={styles.picker}
+      <DropdownList
         data={genderOptions}
-        placeholder="Choose sex"
-        placeholderStyle={{ ...defaultStyles.body, color: Colors.c200 }}
         value={gender}
-        selectedTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        itemTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        containerStyle={{ borderRadius: 8 }}
-        itemContainerStyle={{ borderRadius: 8 }}
-        labelField="label"
-        valueField="value"
         onChange={(item) => setGender(item.value)}
         dropdownPosition="bottom"
-        renderRightIcon={() => (
-          <Entypo name="chevron-thin-down" size={16} color={Colors.c200} />
-        )}
       />
+
       <Text style={styles.text}>Height</Text>
       <View style={styles.sizeIndicator}>
         <TextInput
@@ -308,42 +327,18 @@ const ProfilePage = () => {
         <Text style={styles.indicator}>kg</Text>
       </View>
       <Text style={styles.text}>Activity Level</Text>
-      <Dropdown
-        style={styles.picker}
+      <DropdownList
         data={activityLevelOptions}
-        placeholder="Choose your activity level"
-        placeholderStyle={{ ...defaultStyles.body, color: Colors.c200 }}
         value={activityLevel}
-        selectedTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        itemTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        containerStyle={{ borderRadius: 8 }}
-        itemContainerStyle={{ borderRadius: 8 }}
-        labelField="label"
-        valueField="value"
         onChange={(item) => setActivityLevel(item.value)}
         dropdownPosition="top"
-        renderRightIcon={() => (
-          <Entypo name="chevron-thin-down" size={16} color={Colors.c200} />
-        )}
       />
       <Text style={styles.text}>Health Goal</Text>
-      <Dropdown
-        style={styles.picker}
+      <DropdownList
         data={goalOptions}
-        placeholder="Choose a goal"
-        placeholderStyle={{ ...defaultStyles.body, color: Colors.c200 }}
         value={goal}
-        selectedTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        itemTextStyle={{ ...defaultStyles.body, color: Colors.c400 }}
-        containerStyle={{ borderRadius: 8 }}
-        itemContainerStyle={{ borderRadius: 8 }}
-        labelField="label"
-        valueField="value"
         onChange={(item) => setGoal(item.value)}
         dropdownPosition="top"
-        renderRightIcon={() => (
-          <Entypo name="chevron-thin-down" size={14} color={Colors.c200} />
-        )}
       />
 
       <Button
@@ -404,15 +399,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "10%",
     top: 9,
-  },
-  picker: {
-    width: "80%",
-    height: 34,
-    paddingVertical: 8,
-    marginBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.c100,
-    alignSelf: "center",
   },
   sizeIndicator: {
     flexDirection: "row",
