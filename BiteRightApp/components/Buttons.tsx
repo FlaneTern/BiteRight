@@ -1,51 +1,55 @@
-import React from "react";
 import {
-  DimensionValue,
+  StyleSheet,
+  Image,
   Text,
   TextStyle,
-  ViewStyle,
   TouchableOpacity,
+  TouchableOpacityProps,
 } from "react-native";
+import { forwardRef } from "react";
 
-interface ButtonProps {
-  buttonWidth: DimensionValue;
-  buttonHeight: DimensionValue;
-  buttonColor: string;
-  textColor: string;
-  text?: string;
-  textSize?: number;
-  onPress?: () => void;
-}
+import { defaultStyles } from "@/constants/Styles";
+import Colors from "@/constants/Colors";
 
-const Buttons: React.FC<ButtonProps> = ({
-  buttonWidth,
-  buttonHeight,
-  buttonColor,
-  textColor,
-  text,
-  textSize,
-  onPress,
-}) => {
-  const buttonStyle: ViewStyle = {
-    width: buttonWidth,
-    height: buttonHeight,
-    backgroundColor: buttonColor,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 5,
-  };
+type ButtonProps = {
+  onPress?: TouchableOpacityProps["onPress"];
+  buttonStyle?: TouchableOpacityProps["style"];
+  textStyle?: TextStyle;
+  image?: any;
+  icon?: React.JSX.Element;
+  title?: string;
+} & TouchableOpacityProps;
 
-  const textStyle: TextStyle = {
-    color: textColor,
-    fontSize: textSize || 12,
-    fontWeight: "bold",
-  };
+const Button = forwardRef<TouchableOpacity, ButtonProps>(
+  ({ onPress, title, image, icon, buttonStyle, textStyle }, ref) => {
+    return (
+      <TouchableOpacity
+        ref={ref}
+        style={[defaultStyles.button, buttonStyle]}
+        activeOpacity={0.8}
+        onPress={onPress}
+      >
+        {image && <Image source={image} style={styles.icon} />}
+        {icon}
+        <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
 
-  return (
-    <TouchableOpacity style={buttonStyle} onPress={onPress} activeOpacity={0.7}>
-      <Text style={textStyle}>{text}</Text>
-    </TouchableOpacity>
-  );
-};
+export default Button;
 
-export default Buttons;
+const styles = StyleSheet.create({
+  buttonText: {
+    ...defaultStyles.subHeading,
+    color: Colors.c000,
+    textAlign: "center",
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    marginRight: 10,
+    alignSelf: "center",
+    resizeMode: "contain",
+  },
+});

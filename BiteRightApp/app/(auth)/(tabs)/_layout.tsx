@@ -1,6 +1,6 @@
 import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import { Tabs, useRouter, useSegments } from "expo-router";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
 export default function AppLayout() {
@@ -39,16 +39,27 @@ export default function AppLayout() {
         name="scan"
         options={{
           tabBarIcon: () => (
-            <View style={styles.scanButton}>
-              <Image source={scanIcon} style={{ width: 36, height: 36 }} />
+            <View style={styles.container}>
+              <View style={styles.halfCircle} />
+
+              <View style={styles.scanButton}>
+                <Image source={scanIcon} style={{ width: 36, height: 36 }} />
+              </View>
             </View>
           ),
           headerLeft: () => (
             <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => router.back()}
-              style={{ marginLeft: 20 }}
+              style={{
+                marginLeft: 20,
+                width: 30,
+                height: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <AntDesign name="arrowleft" size={28} color="white" />
+              <FontAwesome6 name="chevron-left" size={28} color="white" />
             </TouchableOpacity>
           ),
           headerTransparent: true,
@@ -70,16 +81,35 @@ export default function AppLayout() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 72,
+  },
   scanButton: {
     width: 84,
     height: 84,
     backgroundColor: Colors.accent2,
     borderRadius: 42,
-    borderColor: Colors.c000,
     borderWidth: 3,
+    borderColor: Colors.c000,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginBottom: 60,
+    zIndex: 10,
+  },
+  halfCircle: {
+    width: 84,
+    height: 42,
+    backgroundColor: Colors.c000,
+    borderTopLeftRadius: 42,
+    borderTopRightRadius: 42,
+    position: "absolute",
+    top: 0,
+    elevation: 5,
   },
 });

@@ -1,10 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+import { StyleSheet } from "react-native";
 import { useOAuth } from "@clerk/clerk-expo";
-import { defaultStyles } from "@/constants/Styles";
 import * as WebBrowser from "expo-web-browser";
+
 import WarmUpBrowser from "@/utils/WarmUpBrowser";
 import Colors from "@/constants/Colors";
+import Button from "./Buttons";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -25,7 +26,7 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({ method }) => {
 
   const { startOAuthFlow } = useOAuth({
     strategy: `oauth_${method}` as mode,
-    redirectUrl: "biteright-app://(auth)/(tabs)/home",
+    redirectUrl: "biteright-app://(auth)/transition",
   });
 
   const _handlePress = useCallback(async () => {
@@ -43,28 +44,22 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({ method }) => {
   const methodName = method[0].toUpperCase() + method.slice(1);
 
   return (
-    <TouchableOpacity
-      style={[defaultStyles.button, styles.button]}
+    <Button
+      title={`Continue With ${methodName}`}
+      image={Icon[method]}
       onPress={_handlePress}
-    >
-      <Image source={Icon[method]} style={styles.icon} />
-      <Text
-        style={[defaultStyles.subHeading, { color: Colors.main }]}
-      >{`Continue With ${methodName}`}</Text>
-    </TouchableOpacity>
+      buttonStyle={styles.button}
+      textStyle={{ color: Colors.main }}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    flexDirection: "row",
     marginVertical: 4,
-    height: 40,
     backgroundColor: Colors.c000,
     borderWidth: 1,
     borderColor: Colors.main,
-    alignSelf: "center",
-    justifyContent: "center",
   },
   icon: {
     width: 16,

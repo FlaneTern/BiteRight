@@ -1,29 +1,27 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import React, { RefObject, useRef, useState } from "react";
-import { defaultStyles } from "@/constants/Styles";
-import { useSignUp } from "@clerk/clerk-expo";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { RefObject, useRef, useState } from "react";
+import { useSignUp } from "@clerk/clerk-expo";
 import { TextInput } from "react-native-gesture-handler";
+
+import { defaultStyles } from "@/constants/Styles";
 import Colors from "@/constants/Colors";
 import OTPInput from "@/components/OTPInput";
+import Buttons from "@/components/Buttons";
 
 const OTPPage = () => {
-  const OTPLogo = require("@/assets/images/OTP-Icon.png");
-  const router = useRouter();
-
-  const { email } = useLocalSearchParams<{ email: string }>();
-  const { isLoaded, signUp, setActive } = useSignUp();
-
   const [loading, setLoading] = useState(false);
   const [codes, setCodes] = useState<string[] | undefined>(Array(6).fill(""));
   const [errorMessages, setErrorMessages] = useState<string[]>();
+
+  const { email, password } = useLocalSearchParams<{
+    email: string;
+    password: string;
+  }>();
+  const { isLoaded, signUp, setActive } = useSignUp();
+
+  const OTPLogo = require("@/assets/images/OTP-Icon.png");
+  const router = useRouter();
   const refs: RefObject<TextInput>[] = [
     useRef<TextInput>(null),
     useRef<TextInput>(null),
@@ -67,7 +65,11 @@ const OTPPage = () => {
 
       await setActive({ session: completeSignUp.createdSessionId });
       setLoading(false);
-      router.replace("(auth)/(tabs)/home");
+
+      router.replace({
+        pathname: "/(auth)/transition",
+        params: { email: email, password: password },
+      });
     } catch (err: any) {
       console.log(err.errors[0].message);
     }
@@ -96,14 +98,7 @@ const OTPPage = () => {
         onChangeCode={onChangeCode}
         refs={refs}
       />
-      <TouchableOpacity
-        style={[defaultStyles.button, { alignSelf: "center" }]}
-        onPress={onPressContinue}
-      >
-        <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-          Continue
-        </Text>
-      </TouchableOpacity>
+      <Buttons title="Continue" onPress={onPressContinue} />
 
       <Link
         replace
@@ -127,7 +122,7 @@ const OTPPage = () => {
 const styles = StyleSheet.create({
   logo: {
     marginTop: 112,
-    width: 69.89,
+    width: 120,
     height: 120,
     alignSelf: "center",
   },

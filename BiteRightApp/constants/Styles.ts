@@ -8,15 +8,17 @@ export const defaultStyles = StyleSheet.create({
   },
   button: {
     backgroundColor: Colors.main,
-    width: "80%",
+    width: "85%",
     height: 40,
     borderRadius: 8,
+    elevation: 2,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+    flexDirection: "row",
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
@@ -53,4 +55,9 @@ export const defaultStyles = StyleSheet.create({
     fontWeight: "regular",
     textDecorationLine: "underline",
   },
+  bodySmall: {
+    fontSize: 10,
+    fontFamily: "RobotoFlex",
+    fontWeight: "regular",
+  }
 })

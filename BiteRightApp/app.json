@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#129B68"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -52,6 +50,14 @@
         "expo-font",
         {
           "fonts": ["./assets/fonts/RobotoFlex-Regular.ttf"]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesClearTextTraffic": true
+          }
         }
       ]
     ],

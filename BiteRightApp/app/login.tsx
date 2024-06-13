@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -13,24 +12,25 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { defaultStyles } from "@/constants/Styles";
 import { useSignIn, useSignUp } from "@clerk/clerk-expo";
+
+import { defaultStyles } from "@/constants/Styles";
+import Button from "@/components/Buttons";
 import Colors from "@/constants/Colors";
 import OAuthButton from "@/components/OAuth";
 
 const Login = () => {
-  const logo = require("@/assets/images/Logo-Green.png");
-  const router = useRouter();
+  const [emailAdddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [reenteredPassword, setReenteredPassword] = useState("");
 
   const { type } = useLocalSearchParams<{ type: string }>();
   const { signIn, setActive, isLoaded } = useSignIn();
   const { signUp, isLoaded: signUpLoaded } = useSignUp();
 
-  const [emailAdddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
-  const [reenteredPassword, setReenteredPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const logo = require("@/assets/images/Logo-Green.png");
+  const router = useRouter();
   const isSignUp = type === "signup";
 
   const onSignInPress = async () => {
@@ -67,7 +67,10 @@ const Login = () => {
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setLoading(false);
-      router.replace({ pathname: "/otp", params: { email: emailAdddress } });
+      router.replace({
+        pathname: "/otp",
+        params: { email: emailAdddress, password: password },
+      });
     } catch (err: any) {
       console.log(err.errors[0].message);
     }
@@ -131,23 +134,9 @@ const Login = () => {
       </TouchableOpacity>
 
       {isSignUp ? (
-        <TouchableOpacity
-          style={[defaultStyles.button, { alignSelf: "center" }]}
-          onPress={onSignUpPress}
-        >
-          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-            Create Account
-          </Text>
-        </TouchableOpacity>
+        <Button title="Create Account" onPress={onSignUpPress} />
       ) : (
-        <TouchableOpacity
-          style={[defaultStyles.button, { alignSelf: "center" }]}
-          onPress={onSignInPress}
-        >
-          <Text style={[defaultStyles.subHeading, { color: Colors.c000 }]}>
-            Login
-          </Text>
-        </TouchableOpacity>
+        <Button title="Login" onPress={onSignInPress} />
       )}
 
       <Text
